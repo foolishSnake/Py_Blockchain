@@ -87,88 +87,109 @@ def transaction_gui():
 
 
 
-
-
-# creating main tkinter window/toplevel
-master = Tk()
-master.title("Airgead Crypto")
-
-
-# adding image (remember image should be PNG and not JPG)
-img = PhotoImage(file=r"images/airgeadcrypto.png")
-img2 = img.subsample(5, 5)
-
-# setting image with the help of label
-Label(master, image=img2).grid(row=0, column=0,
-                               columnspan=3, rowspan=1, padx=0, pady=0, sticky=W+E+N+S)
-
-# this will create a label widget
-l1 = Label(master, text="Number of Blocks:")
-l2 = Label(master, text="Creation time of last Block:")
-l3 = Label(master, text="Average Block Creation time:")
-l4 = Label(master, text="Add New Transaction(Block):")
-l5 = Label(master, text="Display Block details:")
-l6 = Label(master, text="Display Account details:")
-
-
-# grid method to arrange labels in respective
-# rows and columns as specified
-l1.grid(row=2, column=0, sticky=W, pady=2, padx=2)
-l2.grid(row=3, column=0, sticky=W, pady=2, padx=2)
-l3.grid(row=4, column=0, sticky=W, pady=2, padx=2)
-l4.grid(row=1, column=0, sticky=W, pady=2, padx=2)
-l5.grid(row=5, column=0, sticky=W, pady=2, padx=2)
-l6.grid(row=6, column=0, sticky=W, pady=2, padx=2)
-
-# entry widgets, used to take entry from user
-num_blk_ent = Entry(master)
-last_time_ent = Entry(master)
-avg_time_ent = Entry(master)
-blk_info_ent = Entry(master)
-acc_info_ent = Entry(master)
-
-# this will arrange entry widgets
-button_trans = Button(master, text="Create a new transaction(Block)", command=transaction_gui)
-button_trans.grid(row=1, column=0, columnspan=2, sticky=W, padx=2)
-
-num_blk_ent.grid(row=2, column=1, pady=2)
-last_time_ent.grid(row=3, column=1, pady=2)
-avg_time_ent.grid(row=4, column=1, pady=2)
-blk_info_ent.grid(row=5, column=1, pady=2)
-acc_info_ent.grid(row=6, column=1, pady=2)
-
-button_blk = Button(master, text="Submit", command=get_blk)
-button_acc = Button(master, text="Submit", command=get_acc)
-
-# arranging button widgets
-button_blk.grid(row=5, column=2, sticky=W)
-button_acc.grid(row=6, column=2, sticky=W)
-
-large_text = Text(master, height=10, width=55)
-large_text.grid(row=7, column=0, pady=2, padx=2, columnspan=3, sticky=W)
-large_text.insert(INSERT, "HI")
-
-
-# checkbutton widget
-# c1 = Checkbutton(master, text="Preserve")
-# c1.grid(row=6, column=0, sticky=W, columnspan=2)
-
+#
+#
+# # creating main tkinter window/toplevel
+# master = Tk()
+# master.title("Airgead Crypto")
+#
+#
 # # adding image (remember image should be PNG and not JPG)
-# img = PhotoImage(file=r"images/ac_logo.png")
-# img1 = img.subsample(3, 3)
+# img = PhotoImage(file=r"images/airgeadcrypto.png")
+# img2 = img.subsample(5, 5)
 #
 # # setting image with the help of label
-# Label(master, image=img1).grid(row=0, column=2,
-#                                columnspan=2, rowspan=2, padx=5, pady=5)
-
-# button widget
-# b1 = Button(master, text="Zoom in")
-# b2 = Button(master, text="Zoom out")
+# Label(master, image=img2).grid(row=0, column=0,
+#                                columnspan=3, rowspan=1, padx=0, pady=0, sticky=W+E+N+S)
+#
+# # this will create a label widget
+# l1 = Label(master, text="Number of Blocks:")
+# l2 = Label(master, text="Creation time of last Block:")
+# l3 = Label(master, text="Average Block Creation time:")
+# l4 = Label(master, text="Add New Transaction(Block):")
+# l5 = Label(master, text="Display Block details:")
+# l6 = Label(master, text="Display Account details:")
+#
+#
+# # grid method to arrange labels in respective
+# # rows and columns as specified
+# l1.grid(row=2, column=0, sticky=W, pady=2, padx=2)
+# l2.grid(row=3, column=0, sticky=W, pady=2, padx=2)
+# l3.grid(row=4, column=0, sticky=W, pady=2, padx=2)
+# l4.grid(row=1, column=0, sticky=W, pady=2, padx=2)
+# l5.grid(row=5, column=0, sticky=W, pady=2, padx=2)
+# l6.grid(row=6, column=0, sticky=W, pady=2, padx=2)
+#
+# # entry widgets, used to take entry from user
+# num_blk_ent = Entry(master)
+# last_time_ent = Entry(master)
+# avg_time_ent = Entry(master)
+# blk_info_ent = Entry(master)
+# acc_info_ent = Entry(master)
+#
+# # this will arrange entry widgets
+# button_trans = Button(master, text="Create a new transaction(Block)", command=transaction_gui)
+# button_trans.grid(row=1, column=0, columnspan=2, sticky=W, padx=2)
+#
+# num_blk_ent.grid(row=2, column=1, pady=2)
+# last_time_ent.grid(row=3, column=1, pady=2)
+# avg_time_ent.grid(row=4, column=1, pady=2)
+# blk_info_ent.grid(row=5, column=1, pady=2)
+# acc_info_ent.grid(row=6, column=1, pady=2)
+#
+# button_blk = Button(master, text="Submit", command=get_blk)
+# button_acc = Button(master, text="Submit", command=get_acc)
 #
 # # arranging button widgets
-# b1.grid(row=10, column=2, sticky=W)
-# b2.grid(row=10, column=3, sticky=W)
+# button_blk.grid(row=5, column=2, sticky=W)
+# button_acc.grid(row=6, column=2, sticky=W)
+#
+# large_text = Text(master, height=10, width=55)
+# large_text.grid(row=7, column=0, pady=2, padx=2, columnspan=3, sticky=W)
+# large_text.insert(INSERT, "HI")
+#
+#
+# # checkbutton widget
+# # c1 = Checkbutton(master, text="Preserve")
+# # c1.grid(row=6, column=0, sticky=W, columnspan=2)
+#
+# # # adding image (remember image should be PNG and not JPG)
+# # img = PhotoImage(file=r"images/ac_logo.png")
+# # img1 = img.subsample(3, 3)
+# #
+# # # setting image with the help of label
+# # Label(master, image=img1).grid(row=0, column=2,
+# #                                columnspan=2, rowspan=2, padx=5, pady=5)
+#
+# # button widget
+# # b1 = Button(master, text="Zoom in")
+# # b2 = Button(master, text="Zoom out")
+# #
+# # # arranging button widgets
+# # b1.grid(row=10, column=2, sticky=W)
+# # b2.grid(row=10, column=3, sticky=W)
+#
+# # infinite loop which can be terminated
+# # by keyboard or mouse interrupt
+# mainloop()
 
-# infinite loop which can be terminated
-# by keyboard or mouse interrupt
-mainloop()
+try:
+    from Tkinter import Frame, Entry, Tk
+except ImportError:
+    from tkinter import Frame, Entry, Tk
+
+root = Tk()
+frame1 = Frame(root, highlightbackground="green", highlightcolor="green", highlightthickness=1, width=100, height=100,
+               bd=0)
+frame1.pack()
+frame1.pack_propagate(False)
+
+Entry(frame1).pack()
+
+frame2 = Frame(root, highlightbackground="red", highlightcolor="red", highlightthickness=1, width=100, height=100, bd=0)
+frame2.pack()
+frame2.pack_propagate(False)
+
+Entry(frame2).pack()
+
+root.mainloop()
