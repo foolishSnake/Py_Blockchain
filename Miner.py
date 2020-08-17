@@ -7,7 +7,7 @@ class Miner:
         self.difficulty = difficulty
         self.nonce = 0
 
-    def miner(self, transaction, nonce):
+    def get_hash(self, transaction, nonce):
         hashing_value = transaction + str(nonce)
         sha_signature = hashlib.sha256(hashing_value.encode()).hexdigest()
         return sha_signature
@@ -19,10 +19,21 @@ class Miner:
                 return False
         return True
 
+    def mining(self):
 
-test = Miner("test", 0)
+        while True:
+            block_hash = self.get_hash(self.transaction, self.nonce)
+            if self.test_hash(block_hash):
+                return block_hash
+            else:
+                self.nonce += 1
+                continue
+        return block_hash
 
-hash_value = test.miner("test", 0)
+
+test = Miner("test", 1)
+
+hash_value = test.mining()
 
 print(hash_value)
 
