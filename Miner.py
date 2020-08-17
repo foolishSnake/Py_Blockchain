@@ -1,5 +1,5 @@
 import hashlib
-import time
+
 
 class Miner:
 
@@ -23,10 +23,9 @@ class Miner:
     def mining(self):
 
         while True:
-            start_time = time.time()
             block_hash = self.get_hash(self.transaction, self.nonce)
             if self.test_hash(block_hash):
-                return block_hash
+                return [block_hash, self.nonce]
             else:
                 self.nonce += 1
                 continue
