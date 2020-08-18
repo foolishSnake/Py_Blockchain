@@ -14,5 +14,3 @@ class Account:
 
     def decrese_balance(self, amount):
         self.balance -= amount
-
-        

@@ -7,9 +7,9 @@ class Block:
     block_data = None
     nonce = None
 
-    def __init__(self, number, hash, previous_hash, time_stamp, block_data, nonce, creation_time):
+    def __init__(self, number, block_hash, previous_hash, time_stamp, block_data, nonce, creation_time):
         self.number = number
-        self.hash = hash
+        self.block_hash = block_hash
         self.previous_hash = previous_hash
         self.time_stamp = time_stamp
         self.block_data = block_data
