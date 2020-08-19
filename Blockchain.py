@@ -1,9 +1,11 @@
 import json
 
 class Blockchain:
-    name = "Airgead Crypto"
+    NAME = "Airgead Crypto"
     next_block_number = 0
-    difficulty = 1
+    difficulty = 0
+    ACC_FILE = "AirgeadCryptoAccount.json"
+    BLK_FILE = "AirgeadCryptoBlockchain.json"
 
     def genesis_block(self):
         return None
