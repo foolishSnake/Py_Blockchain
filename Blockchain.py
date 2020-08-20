@@ -1,5 +1,6 @@
 import json
 from Miner import Miner
+from Account import Account
 
 class Blockchain:
     NAME = "Airgead Crypto"
@@ -26,3 +27,12 @@ class Blockchain:
                 "To Account": to_acc, "Amount": amount, "Note": note}
         transaction = json.dumps(temp)
         return transaction
+
+    def first_accounts(self):
+        if self.last_id is None:
+            sys_acc = Account("System", 1000000)
+            self.last_id = 0
+            self.add_account("System", 0)
+
+            self.add_account("Alice", 100)
+            self.add_account("Bob", 100)
