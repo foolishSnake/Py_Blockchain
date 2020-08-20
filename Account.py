@@ -39,5 +39,7 @@ class Account:
         return trans_json
 
     def set_balance(self):
+        return
+
 
 

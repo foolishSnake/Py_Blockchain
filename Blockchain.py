@@ -1,6 +1,10 @@
 import json
 from Miner import Miner
 from Account import Account
+from Transaction import Transaction
+from VerifyBlock import VerifyBlock
+from Block import Block
+import timeit
 
 class Blockchain:
     NAME = "Airgead Crypto"
@@ -8,17 +12,26 @@ class Blockchain:
     difficulty = 0
     ACC_FILE = "AirgeadCryptoAccount.json"
     BLK_FILE = "AirgeadCryptoBlockchain.json"
-    previous_hash = 0000000000000000000000000000000000000000000000000000000000000000
+    previous_hash = "0000000000000000000000000000000000000000000000000000000000000000"
+    blocks = []
 
     def genesis_block(self):
-        trans = self.transaction_str(0, 0, 0, "Genesis Block\nSetup by system account", self.previous_hash)
-        miner = Miner(trans, 0)
-        blk_hash = ()
-        genesis_dic = {"Block Number": 0, "Block Hash":}
+        start_time = timeit.timeit()
+        trans = Transaction(0, 0, 1000000, "Genesis Block!", self.previous_hash)
+        miner = Miner(trans, self.difficulty)
+        hash_data = miner.mining()
+        end_time = timeit.timeit()
+        if self.verity_hash(trans, hash_data[0], hash_data[1]):
+
+
+            pass
+        else:
+            return "Error"
+
         return None
 
-    def create_block(self, note, from_acc, to_acc, previous_hash):
-        transaction = self.transaction_str(from_acc, to_acc, note)
+    def create_block(self, trans, blk_hash, nonce):
+
 
         return
 
@@ -36,3 +49,6 @@ class Blockchain:
 
             self.add_account("Alice", 100)
             self.add_account("Bob", 100)
+
+    def verity_hash(self, trans, hash_data):
+        return VerifyBlock.verify_block(trans, hash_data[0], hash_data[1])

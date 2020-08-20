@@ -1,9 +1,9 @@
 import json
-import Account from Account
+from Account import Account
 
 class AccountManager:
     accounts = []
-    last_id = Nine
+    last_id = None
 
     def add_count(self, name):
 
