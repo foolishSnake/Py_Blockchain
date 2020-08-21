@@ -5,7 +5,6 @@ from Account import Account
 from Transaction import Transaction
 from VerifyBlock import VerifyBlock
 from Block import Block
-import timeit
 import time
 
 class Blockchain:
@@ -16,13 +15,14 @@ class Blockchain:
     BLK_FILE = "AirgeadCryptoBlockchain.csv"
     previous_hash = "0000000000000000000000000000000000000000000000000000000000000000"
     blocks = []
+    accounts = []
 
     def genesis_block(self):
-        start_time = timeit.timeit()
+        start_time = time.monotonic()
         trans = Transaction(0, 0, 1000000, "Genesis Block!", self.previous_hash)
         miner = Miner(trans, self.difficulty)
         hash_data = miner.mining()
-        end_time = timeit.timeit()
+        end_time = time.monotonic()
         if self.verity_hash(trans, hash_data[0], hash_data[1]):
             new_blk = Block(self.block_number, hash_data[0], time.time(), hash_data[1], end_time - start_time,
                             trans, self.BLK_FILE)
