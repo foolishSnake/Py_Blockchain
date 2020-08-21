@@ -1,17 +1,19 @@
 import json
+import csv
 from Miner import Miner
 from Account import Account
 from Transaction import Transaction
 from VerifyBlock import VerifyBlock
 from Block import Block
 import timeit
+import time
 
 class Blockchain:
     NAME = "Airgead Crypto"
-    next_block_number = 0
+    block_number = 0
     difficulty = 0
-    ACC_FILE = "AirgeadCryptoAccount.json"
-    BLK_FILE = "AirgeadCryptoBlockchain.json"
+    ACC_FILE = "AirgeadCryptoAccount.csv"
+    BLK_FILE = "AirgeadCryptoBlockchain.csv"
     previous_hash = "0000000000000000000000000000000000000000000000000000000000000000"
     blocks = []
 
@@ -22,7 +24,11 @@ class Blockchain:
         hash_data = miner.mining()
         end_time = timeit.timeit()
         if self.verity_hash(trans, hash_data[0], hash_data[1]):
-
+            new_blk = Block(self.block_number, hash_data[0], time.time(), hash_data[1], end_time - start_time,
+                            trans, self.BLK_FILE)
+            self.increase_block_number()
+            self.change_previous_hash(hash_data[0])
+            self.blocks.append(new_blk)
 
             pass
         else:
@@ -31,7 +37,6 @@ class Blockchain:
         return None
 
     def create_block(self, trans, blk_hash, nonce):
-
 
         return
 
@@ -52,3 +57,10 @@ class Blockchain:
 
     def verity_hash(self, trans, hash_data):
         return VerifyBlock.verify_block(trans, hash_data[0], hash_data[1])
+
+    def increase_block_number(self):
+        self.block_number += 1
+
+    def change_previous_hash(self, new_hash):
+        self.previous_hash = new_hash
+
