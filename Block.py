@@ -38,7 +38,7 @@ class Block:
         with open(self.chain_file, 'r') as read:
             csv_read = csv.DictReader(read, delimiter="~")
             for line in csv_read:
-                print(line['Block Data'])
+                return line['Block Data']
 
     def get_block_csv(self):
         csv_line = "{}~{}~{}~{}~{}~{}".format(self.number, self.block_hash, self.time_stamp,
@@ -59,11 +59,19 @@ class Block:
         return dict
 
 
-temp = {"Previous Block Hash": 0, "From Account": 0,
-        "To Account": 0, "Amount": 0, "Note": "No note"}
-transaction = json.dumps(temp)
+temp = "{\"Previous Block Hash\": 0, \"From Account\": 0,\"To Account\": 0, \"Amount\": 0, \"Note\": \"No note\"}"
+# transaction = json.dumps(temp)
+# print(transaction)
 
-bk = Block(1, 23, time.time(), 1, 0.01, transaction, "test.csv")
+bk = Block(1, 23, time.time(), 1, 0.01, temp, "test.csv")
 
+# bk.write_block()
+trans_json = bk.read_csv()
+
+trans_dic = json.loads(trans_json)
+print(trans_json)
+print(type(trans_json))
+print(trans_dic["Amount"])
 bk.write_block()
-bk.read_csv()
+bk2 = Block(2, 23, time.time(), 1, 0.01, temp, "test.csv")
+bk2.write_block()
