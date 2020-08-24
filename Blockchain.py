@@ -19,11 +19,10 @@ class Blockchain:
 
     def genesis_block(self):
         start_time = time.monotonic()
-        trans = Transaction(0, 0, 1000000, "Genesis Block!", self.previous_hash)
-        miner = Miner(trans, self.difficulty)
-        hash_data = miner.mining()
+        trans = Transaction(0, 0, 1000000, "Genesis Block!", self.previous_hash).transaction()
+        hash_data = Miner().mining(trans, self.difficulty)
         end_time = time.monotonic()
-        if self.verity_hash(trans, hash_data[0], hash_data[1]):
+        if self.verity_hash(trans, hash_data):
             new_blk = Block(self.block_number, hash_data[0], time.time(), hash_data[1], end_time - start_time,
                             trans, self.BLK_FILE)
             self.increase_block_number()
