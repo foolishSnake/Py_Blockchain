@@ -40,9 +40,8 @@ class Blockchain:
         return
 
     def transaction_str(self, from_acc, to_acc, amount, note, previous_hash):
-        temp = {"Previous Block Hash": previous_hash, "From Account": from_acc,
-                "To Account": to_acc, "Amount": amount, "Note": note}
-        transaction = json.dumps(temp)
+        transaction = "{\"Previous Block Hash\": previous_hash, \"From Account\": from_acc, \"To Account\": to_acc, " \
+               "\"Amount\": amount, \"Note\": note} "
         return transaction
 
     def first_accounts(self):
