@@ -11,7 +11,9 @@ from Account import Account
 from Transaction import Transaction
 from VerifyBlock import VerifyBlock
 from Block import Block
+from AccountManager import AccountManager
 import time
+
 
 class Blockchain:
     NAME = "Airgead Crypto"
@@ -23,6 +25,9 @@ class Blockchain:
     blocks = []
     accounts = []
 
+    def __init__(self):
+        self.acc_manager = AccountManager(self.ACC_FILE)
+
     def genesis_block(self):
         """
         Creates a genesis block on the blockchain.
@@ -30,7 +35,7 @@ class Blockchain:
         :return:
         """
         start_time = time.monotonic()
-        trans = Transaction(0, 0, 1000000, "Genesis Block!", self.previous_hash).transaction()
+        trans = Transaction(0, 0, 1000000, "Genesis Block!", self.previous_hash).transaction_premine()
         hash_data = Miner().mining(trans, self.difficulty)
         end_time = time.monotonic()
         if self.verity_hash(trans, hash_data):
@@ -47,19 +52,13 @@ class Blockchain:
 
         return
 
-    def transaction_str(self, from_acc, to_acc, amount, note, previous_hash):
-        transaction = "{\"Previous Block Hash\": previous_hash, \"From Account\": from_acc, \"To Account\": to_acc, " \
-               "\"Amount\": amount, \"Note\": note} "
-        return transaction
-
     def first_accounts(self):
-        if self.last_id is None:
-            sys_acc = Account("System", 1000000)
-            self.last_id = 0
-            self.add_account("System", 0)
+        self.acc_manager.add_account("System")
+        self.acc_manager.add_account("Alice")
+        self.acc_manager.add_account("Bob")
 
-            self.add_account("Alice", 100)
-            self.add_account("Bob", 100)
+    def add_account(self, name):
+        self.acc_manager.add_account(name)
 
     def verity_hash(self, trans, hash_data):
         return VerifyBlock.verify_block(trans, hash_data[0], hash_data[1])
@@ -70,3 +69,6 @@ class Blockchain:
     def change_previous_hash(self, new_hash):
         self.previous_hash = new_hash
 
+bc = Blockchain()
+# bc.first_accounts()
+bc.add_account("Dave")
