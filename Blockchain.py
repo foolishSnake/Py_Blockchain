@@ -71,4 +71,6 @@ class Blockchain:
 
 bc = Blockchain()
 # bc.first_accounts()
-bc.add_account("Dave")
+bc.add_account("Hannah")
+am = AccountManager(bc.ACC_FILE)
+print(am.get_account("20"))

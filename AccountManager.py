@@ -11,7 +11,6 @@ class AccountManager:
     def __init__(self, account_file):
         self.account_file = account_file
         self.get_last_id()
-        self.last_id
 
     def add_account(self, name):
         new_acc = Account(self.last_id + 1, name)
@@ -26,7 +25,7 @@ class AccountManager:
             with open(self.account_file, 'r') as read:
                 csv_read = csv.DictReader(read, delimiter="|")
                 for line in csv_read:
-                    self.last_id = line['Account ID']
+                    self.last_id = int(line['Account ID'])
                 return "Account ID retrieved"
 
         else:
@@ -37,12 +36,11 @@ class AccountManager:
             with open(self.account_file, 'r') as read:
                 csv_read = csv.DictReader(read, delimiter="|")
                 for line in csv_read:
-                    if line['Account ID'] == acc_num:
+                   if line['Account ID'] == acc_num:
                         return line
-                    else:
-                        return "Data Not Found!"
+                else:
+                    return "Data Not Found!"
         else:
-            self.last_id = 0
             return "Can't find Accounts file \"{}\"".format(self.account_file)
 
     def write_account(self, account):
@@ -55,3 +53,10 @@ class AccountManager:
             with open(self.account_file, "a") as acc:
                 csv_write = csv.DictWriter(acc, fieldnames=self.CSV_HEADER, delimiter="|")
                 csv_write.writerow(account.account_dict())
+
+    def increase_balance(self, acc_id, amount):
+        acc = self.get_account(acc_id)
+        if acc != "Data Not Found!" or acc != "Can't find Blockchain file \"{}\"".format(self.account_file)
+            new_acc = Account(acc['Account ID'], acc['Name'])
+            acc_bal = int(acc['Balance'])
+
