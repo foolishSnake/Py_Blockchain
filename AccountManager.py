@@ -31,17 +31,27 @@ class AccountManager:
         else:
             return "Can't find Blockchain file \"{}\"".format(self.account_file)
 
-    def get_account(self, acc_num):
+    def get_account_file(self, acc_num):
         if os.path.isfile(self.account_file):
             with open(self.account_file, 'r') as read:
                 csv_read = csv.DictReader(read, delimiter="|")
                 for line in csv_read:
-                   if line['Account ID'] == acc_num:
+                    if line['Account ID'] == acc_num:
                         return line
                 else:
-                    return "Data Not Found!"
+                    return None
         else:
-            return "Can't find Accounts file \"{}\"".format(self.account_file)
+            return None
+
+    def get_account_list(self, acc_num):
+        if len(self.accounts) > 0:
+            for i in self.accounts:
+                if i.acc_id == acc_num:
+                    return i
+                else:
+                    return None
+        else:
+            return None
 
     def write_account(self, account):
         if not os.path.isfile(self.account_file):
@@ -55,8 +65,29 @@ class AccountManager:
                 csv_write.writerow(account.account_dict())
 
     def increase_balance(self, acc_id, amount):
-        acc = self.get_account(acc_id)
-        if acc != "Data Not Found!" or acc != "Can't find Blockchain file \"{}\"".format(self.account_file)
+        acc = self.get_account_file(acc_id)
+        if acc != "Data Not Found!" or acc != "Can't find Blockchain file \"{}\"".format(self.account_file):
             new_acc = Account(acc['Account ID'], acc['Name'])
             acc_bal = int(acc['Balance'])
 
+    def get_account(self, acc_id):
+        """
+        Takes the account ID and checks if that account is in the self.accounts list.
+        If it is returns the object. If not will read the accounts files, if it finds the
+        account adds it values to an Account object and appends it to self.accounts return
+        the accounts object. If not found returns None
+        :param acc_id:
+        :return:
+        """
+        acc = self.get_account_list(acc_id)
+        if acc is None:
+            acc_str = self.get_account_file(acc_id)
+            if acc_str is None:
+                return None
+            else:
+                acc = Account(int(acc_str['Account ID']), acc_str['Name'])
+                acc.balance = int(acc_str['Balance'])
+                self.accounts.append(acc)
+                return acc
+        else:
+            return acc
