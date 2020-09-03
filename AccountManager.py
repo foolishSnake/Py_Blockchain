@@ -68,14 +68,21 @@ class AccountManager:
                 csv_write = csv.DictWriter(acc, fieldnames=self.CSV_HEADER, delimiter="|")
                 csv_write.writerow(account.account_dict())
 
-    def increase_balance(self, acc_id, amount):
+    def amend_balance(self, acc_id, amount):
+        """
+        Has the account ID and amount the balance as parameters. Use the acc_id to get an Account object.
+        Amend the amount to the account balance. On success returns an updated Account object.
+        Returns 1 if the acc_id was not found, 2 if the account csv file was not found.
+        :param acc_id:
+        :param amount:
+        :return:
+        """
         acc = self.get_account(acc_id)
         if acc == 1 or acc == 2:
             return acc
         else:
-            new_acc = Account(acc['Account ID'], acc['Name'])
-            acc_bal = int(acc['Balance'])
-            return 3
+            acc.balance += amount
+            return acc
 
     def get_account(self, acc_id):
         """
@@ -86,15 +93,21 @@ class AccountManager:
         :param acc_id:
         :return:
         """
-        acc = self.get_account_list(acc_id)
-        if acc is (1 or 2):
-            acc_str = self.get_account_file(acc_id)
-            if acc_str is (1 or 2):
-                return acc_str
-            else:
-                acc = Account(int(acc_str['Account ID']), acc_str['Name'])
-                acc.balance = int(acc_str['Balance'])
-                self.accounts.append(acc)
-                return acc
+        acc_list = self.get_account_list(acc_id)
+        if acc_list is (1 or 2):
+            acc_file = self.get_account_file(acc_id)
+            if acc_file is (1 or 2):
+                return acc_file
         else:
-            return acc
+            return acc_list
+
+    def update_csv(self, acc_id, amount):
+        if amount > 0:
+            acc = self.amend_balance(acc_id, amount)
+            if type(acc) == Account:
+                new_line = {self.CSV_HEADER[0]: acc.acc_id, self.CSV_HEADER[1]: acc.name,
+                            self.CSV_HEADER[2]: acc.balance}
+                return new_line
+            else:
+                return acc
+
