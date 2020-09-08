@@ -49,29 +49,32 @@ class AccountManager:
 
     def get_account_list(self, acc_num):
         if len(self.accounts) > 0:
+            print("Account is has accounts in it")
             for i in self.accounts:
                 if i.acc_id == acc_num:
+                    print("found account")
                     return i
-                else:
-                    return 1
+            print("cant find account")
+            return 1
         else:
+            print("there are no records in the account list")
             return 1
 
     def write_account(self, account):
         if not os.path.isfile(self.account_file):
-            with open(self.account_file, "w") as acc:
+            with open(self.account_file, "w", newline='') as acc:
                 csv_write = csv.DictWriter(acc, fieldnames=self.CSV_HEADER, delimiter='|')
                 csv_write.writeheader()
                 csv_write.writerow(account.account_dict())
         else:
-            with open(self.account_file, "a") as acc:
+            with open(self.account_file, "a", newline='') as acc:
                 csv_write = csv.DictWriter(acc, fieldnames=self.CSV_HEADER, delimiter="|")
                 csv_write.writerow(account.account_dict())
 
     def amend_balance(self, acc_id, amount):
         """
-        Has the account ID and amount the balance as parameters. Use the acc_id to get an Account object.
-        Amend the amount to the account balance. On success returns an updated Account object.
+        Has the account ID and amount the balance has to be changed by as parameters. Use the acc_id to get an Account
+        object. Amend the account balance. On success returns an updated Account object.
         Returns 1 if the acc_id was not found, 2 if the account csv file was not found.
         :param acc_id:
         :param amount:
@@ -87,27 +90,56 @@ class AccountManager:
     def get_account(self, acc_id):
         """
         Takes the account ID and checks if that account is in the self.accounts list.
-        If it is returns the object. If not will read the accounts files, if it finds the
+        If it is returns the object. If not, will attempt to read the accounts files, if it finds the
         account adds it values to an Account object and appends it to self.accounts return
-        the accounts object. If not found returns None
+        the accounts object. Returns 1 if account is not found and 2 if account file is not found.
         :param acc_id:
         :return:
         """
         acc_list = self.get_account_list(acc_id)
         if acc_list is (1 or 2):
-            acc_file = self.get_account_file(acc_id)
-            if acc_file is (1 or 2):
-                return acc_file
+            acc_list = self.get_account_file(acc_id)
+            return acc_list
         else:
             return acc_list
 
     def update_csv(self, acc_id, amount):
-        if amount > 0:
-            acc = self.amend_balance(acc_id, amount)
+        """
+        The read write part of this code is an amendment of Stack Overflow user Adam Smith answer
+        https://stackoverflow.com/questions/28416678/python-replacing-value-of-a-row-in-a-csv-file
+        :param acc_id:
+        :param amount:
+        :return:
+        """
+        acc = self.get_account(acc_id)
+        acc.set_balance(amount)
+        if not os.path.isfile(self.account_file):
+            return 2
+        else:
             if type(acc) == Account:
-                new_line = {self.CSV_HEADER[0]: acc.acc_id, self.CSV_HEADER[1]: acc.name,
-                            self.CSV_HEADER[2]: acc.balance}
-                return new_line
+                new_line = [acc.acc_id, acc.name, acc.balance]
+                with open(self.account_file) as in_file:
+                    reader = csv.reader(in_file.readlines(), delimiter='|')
+
+                with open(self.account_file, 'w', newline='') as out_file:
+                    writer = csv.writer(out_file, delimiter='|')
+                    try:
+                        for line in reader:
+                            if int(line[0]) == acc_id:
+                                writer.writerow(new_line)
+                                break
+                            else:
+                                writer.writerow(line)
+                        writer.writerows(reader)
+                    except ValueError:
+                        writer.writerows(reader)
+                        return 1
+
+                return 3
             else:
                 return acc
 
+acc_man = AccountManager("AirgeadCryptoAccount.csv")
+
+val = acc_man.update_csv(1, 100)
+# print(acc_man.ERROR_CODES[val])

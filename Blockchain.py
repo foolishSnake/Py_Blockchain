@@ -60,7 +60,7 @@ class Blockchain:
     def add_account(self, name):
         self.acc_manager.add_account(name)
 
-    def verity_hash(self, trans, hash_data):
+    def verify_hash(self, trans, hash_data):
         return VerifyBlock.verify_block(trans, hash_data[0], hash_data[1])
 
     def increase_block_number(self):
@@ -70,7 +70,6 @@ class Blockchain:
         self.previous_hash = new_hash
 
 bc = Blockchain()
-# bc.first_accounts()
+bc.first_accounts()
 bc.add_account("Hannah")
-am = AccountManager(bc.ACC_FILE)
-print(am.get_account_file("20"))
+# am = AccountManager(bc.ACC_FILE)
