@@ -49,7 +49,7 @@ class AccountManager:
 
     def get_account_list(self, acc_num):
         if len(self.accounts) > 0:
-            print("Account is has accounts in it")
+            print("Account has accounts in it")
             for i in self.accounts:
                 if i.acc_id == acc_num:
                     print("found account")
@@ -69,7 +69,10 @@ class AccountManager:
         else:
             with open(self.account_file, "a", newline='') as acc:
                 csv_write = csv.DictWriter(acc, fieldnames=self.CSV_HEADER, delimiter="|")
+                if os.path.getsize(self.account_file) == 0:
+                    csv_write.writeheader()
                 csv_write.writerow(account.account_dict())
+
 
     def amend_balance(self, acc_id, amount):
         """
@@ -119,15 +122,17 @@ class AccountManager:
             if type(acc) == Account:
                 new_line = [acc.acc_id, acc.name, acc.balance]
                 with open(self.account_file) as in_file:
-                    reader = csv.reader(in_file.readlines(), delimiter='|')
+                    reader = csv.DictReader(in_file.readlines(), delimiter='|', fieldnames=self.CSV_HEADER)
 
                 with open(self.account_file, 'w', newline='') as out_file:
-                    writer = csv.writer(out_file, delimiter='|')
+                    writer = csv.DictWriter(out_file, delimiter='|', fieldnames=self.CSV_HEADER)
                     try:
+                        writer.writeheader()
                         for line in reader:
-                            if int(line[0]) == acc_id:
-                                writer.writerow(new_line)
-                                break
+                            # print(int(line[0]) == 4)
+                            if int(line[self.CSV_HEADER[0]]) == acc_id:
+                                print(line)
+                                writer.writerow(acc.account_dict())
                             else:
                                 writer.writerow(line)
                         writer.writerows(reader)
@@ -139,7 +144,7 @@ class AccountManager:
             else:
                 return acc
 
-acc_man = AccountManager("AirgeadCryptoAccount.csv")
-
-val = acc_man.update_csv(1, 100)
-# print(acc_man.ERROR_CODES[val])
+# acc_man = AccountManager("AirgeadCryptoAccount.csv")
+#
+# val = acc_man.update_csv(1, 100)
+# # print(acc_man.ERROR_CODES[val])
