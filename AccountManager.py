@@ -115,34 +115,46 @@ class AccountManager:
         :return:
         """
         acc = self.get_account(acc_id)
-        acc.set_balance(amount)
         if not os.path.isfile(self.account_file):
             return 2
         else:
             if type(acc) == Account:
-                new_line = [acc.acc_id, acc.name, acc.balance]
+                acc.set_balance(amount)
+                output = []
                 with open(self.account_file) as in_file:
-                    reader = csv.DictReader(in_file.readlines(), delimiter='|', fieldnames=self.CSV_HEADER)
+                    reader = csv.DictReader(in_file, delimiter='|')
+                    for line in reader:
+                        print(line)
+                        if int(line['Account ID']) == acc_id:
+                            output.append(acc.account_dict())
+                        else:
+                            output.append(line)
 
                 with open(self.account_file, 'w', newline='') as out_file:
                     writer = csv.DictWriter(out_file, delimiter='|', fieldnames=self.CSV_HEADER)
-                    try:
-                        writer.writeheader()
-                        for line in reader:
-                            # print(int(line[0]) == 4)
-                            if int(line[self.CSV_HEADER[0]]) == acc_id:
-                                print(line)
-                                writer.writerow(acc.account_dict())
-                            else:
-                                writer.writerow(line)
-                        writer.writerows(reader)
-                    except ValueError:
-                        writer.writerows(reader)
-                        return 1
+                    writer.writeheader()
+                    writer.writerows(output)
 
-                return 3
-            else:
-                return acc
+
+            #     with open(self.account_file, 'w', newline='') as out_file:
+            #         writer = csv.DictWriter(out_file, delimiter='|', fieldnames=self.CSV_HEADER)
+            #         try:
+            #             writer.writeheader()
+            #             for line in reader:
+            #                 # print(int(line[0]) == 4)
+            #                 if int(line[self.CSV_HEADER[0]]) == acc_id:
+            #                     print(line)
+            #                     writer.writerow(acc.account_dict())
+            #                 else:
+            #                     writer.writerow(line)
+            #             writer.writerows(reader)
+            #         except ValueError:
+            #             writer.writerows(reader)
+            #             return 1
+            #
+            #     return 3
+            # else:
+            #     return acc
 
 # acc_man = AccountManager("AirgeadCryptoAccount.csv")
 #

@@ -70,7 +70,12 @@ class Blockchain:
         self.previous_hash = new_hash
 
 bc = Blockchain()
-bc.first_accounts()
-bc.add_account("Dave")
-am = AccountManager(bc.ACC_FILE)
-am.update_csv(2,100)
+# bc.first_accounts()
+# bc.add_account("Hannah")
+file = bc.acc_manager.get_account(2)
+print(file.account_dict())
+bc.acc_manager.update_csv(2, 100)
+
+# file = bc.acc_manager.get_account(2)
+# print(file.account_dict())
+
