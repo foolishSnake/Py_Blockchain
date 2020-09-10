@@ -87,7 +87,8 @@ class AccountManager:
         if acc == 1 or acc == 2:
             return acc
         else:
-            acc.balance += amount
+            acc.set_balance(acc_id)
+            self.update_csv(acc_id)
             return acc
 
     def get_account(self, acc_id):
@@ -106,57 +107,31 @@ class AccountManager:
         else:
             return acc_list
 
-    def update_csv(self, acc_id, amount):
+    def update_csv(self, acc):
         """
+        Takes an Account object and uses it to update the balance in the account csv file.
         The read write part of this code is an amendment of Stack Overflow user Adam Smith answer
         https://stackoverflow.com/questions/28416678/python-replacing-value-of-a-row-in-a-csv-file
-        :param acc_id:
-        :param amount:
+        :param acc:
         :return:
         """
-        acc = self.get_account(acc_id)
         if not os.path.isfile(self.account_file):
             return 2
         else:
             if type(acc) == Account:
-                acc.set_balance(amount)
                 output = []
                 with open(self.account_file) as in_file:
                     reader = csv.DictReader(in_file, delimiter='|')
                     for line in reader:
                         print(line)
-                        if int(line['Account ID']) == acc_id:
-                            output.append(acc.account_dict())
+                        if int(line['Account ID']) == acc.acc_id:
+                            output.append(acc.account_dictacc_id())
                         else:
                             output.append(line)
-
                 with open(self.account_file, 'w', newline='') as out_file:
                     writer = csv.DictWriter(out_file, delimiter='|', fieldnames=self.CSV_HEADER)
                     writer.writeheader()
                     writer.writerows(output)
+            else:
+                return acc
 
-
-            #     with open(self.account_file, 'w', newline='') as out_file:
-            #         writer = csv.DictWriter(out_file, delimiter='|', fieldnames=self.CSV_HEADER)
-            #         try:
-            #             writer.writeheader()
-            #             for line in reader:
-            #                 # print(int(line[0]) == 4)
-            #                 if int(line[self.CSV_HEADER[0]]) == acc_id:
-            #                     print(line)
-            #                     writer.writerow(acc.account_dict())
-            #                 else:
-            #                     writer.writerow(line)
-            #             writer.writerows(reader)
-            #         except ValueError:
-            #             writer.writerows(reader)
-            #             return 1
-            #
-            #     return 3
-            # else:
-            #     return acc
-
-# acc_man = AccountManager("AirgeadCryptoAccount.csv")
-#
-# val = acc_man.update_csv(1, 100)
-# # print(acc_man.ERROR_CODES[val])
