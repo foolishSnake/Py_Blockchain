@@ -1,3 +1,9 @@
+# Application: Airgead Crypto
+# File: AccountManager.py
+# Version: 0.1
+# Author: Phillip Hourigan
+# Course: DT249/4
+
 from Account import Account
 import os.path
 import csv
@@ -127,7 +133,7 @@ class AccountManager:
             return acc
         else:
             acc.set_balance(amount)
-            self.update_csv(acc_id)
+            self.update_csv(acc)
             return acc
 
     def get_account(self, acc_id):
@@ -164,7 +170,7 @@ class AccountManager:
                     for line in reader:
                         print(line)
                         if int(line['Account ID']) == acc.acc_id:
-                            output.append(acc.account_dictacc_id())
+                            output.append(acc.account_dict())
                         else:
                             output.append(line)
                 with open(self.account_file, 'w', newline='') as out_file:

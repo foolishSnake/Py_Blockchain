@@ -74,7 +74,7 @@ bc = Blockchain()
 # bc.add_account("Hannah")
 file = bc.acc_manager.get_account(2)
 print(file.account_dict())
-bc.acc_manager.update_csv(2, 100)
+bc.acc_manager.amend_balance(4, 100)
 
 # file = bc.acc_manager.get_account(2)
 # print(file.account_dict())
