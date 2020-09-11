@@ -60,8 +60,7 @@ class Block:
     def read_blk(self, key, value):
         """
         Reads the lines in the blockchain file, search for a Block using its key value pair.
-        Returns the line if found, "Data Not Found!" message if not found and ""Can't find Blockchain file"
-        message if if can't find the blockchain file.
+        Returns the line if found, 1 if data not found and 2 if the blockchain file wa not found.
         :param key:
         :param value:
         :return:
@@ -73,9 +72,9 @@ class Block:
                     if line[key] == value:
                         return line
                     else:
-                        return "Data Not Found!"
+                        return 1
         else:
-            return "Can't find Blockchain file \"{}\"".format(self.chain_file)
+            return 2
 
     def get_csv_dict(self):
         """

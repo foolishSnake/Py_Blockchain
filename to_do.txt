@@ -3,6 +3,7 @@ Airgead Crypto Todo list
 Block.py
 Comment
 Test
+This has methods that should be moved to another class
 
 Account.py
 Look finished and work as expected
@@ -11,18 +12,19 @@ AccountManager.py
 Look finished and working as expected
 
 VerifyBlock.py
-Needs comments.
 Testing
-Might build into the Blockchain class and remove!
+
 
 Blockchain.py
 Needs comments.
 Needs testing.
-Needs method/s for dealig with transactions.
+Needs method/s for dealing with transactions.
+Might move methods from the Block.py to this class???
 
 BlockData.py
 Need comments.
 Does not need testing.
+Not sure we need this.
 
 BlockGUI.py
 Layout is finished.
@@ -35,7 +37,8 @@ Some comments are done, need the last of it finished.
 Needs testing code at bottom of file removed.
 
 Transaction.py
-Need comments.
+Need comments. Done
+Has block has attribute (might not be needed)
 
 App as a whole.
 Need integration.
