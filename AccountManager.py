@@ -4,24 +4,45 @@ import csv
 
 
 class AccountManager:
+    """
+    Account Manager is used to manage the interaction with Account objects and the storage file.
+    """
     accounts = []
     last_id = 0
     CSV_HEADER = ['Account ID', 'Name', 'Balance']
     ERROR_CODES = {1: "Record Not Found", 2: "File Not Found", 3: "Success"}
 
     def __init__(self, account_file):
+        """
+        Takes a string for the account file as a parameter, use it to set the account_file attribute.
+        Calls the self.get_last_id() method to set the value of the last_id attribute.
+        :param account_file:
+        """
         self.account_file = account_file
         self.get_last_id()
 
     def add_account(self, name):
+        """
+        Take the name of the account holder and creates a new Account object for it,
+        adds the object to the accounts list. Call the write_account method to save the details to file.
+        Increases the last_id attribute by one.
+        Returns 3 for successful completion.
+        :param name:
+        :return:
+        """
         new_acc = Account(self.last_id + 1, name)
         self.accounts.append(new_acc)
         self.last_id += 1
         self.write_account(new_acc)
 
-        return
+        return 3
 
     def get_last_id(self):
+        """
+        Attempts to read the account csv file to get the value of the last account ID used.
+        Returns 3 if successful, Returns 2 if it fails to read the file.
+        :return:
+        """
         if os.path.isfile(self.account_file):
             with open(self.account_file, 'r') as read:
                 csv_read = csv.DictReader(read, delimiter="|")
@@ -33,6 +54,13 @@ class AccountManager:
             return 2
 
     def get_account_file(self, acc_num):
+        """
+        Takes an integer value for the account ID, searches the account file for the account.
+        If successful returns a Account object with account details and adds it to the accounts list.
+        If it fails will return 1 if it can't find the account or 2 if it can't find the file.
+        :param acc_num:
+        :return:
+        """
         if os.path.isfile(self.account_file):
             with open(self.account_file, 'r') as read:
                 csv_read = csv.DictReader(read, delimiter="|")
@@ -48,19 +76,30 @@ class AccountManager:
             return 2
 
     def get_account_list(self, acc_num):
+        """
+        Takes the account ID as a parameter and searches the accounts file list to find the account object.
+        On success returns an account object, if it falls to find the account returns 1
+        :param acc_num:
+        :return:
+        """
         if len(self.accounts) > 0:
-            print("Account has accounts in it")
             for i in self.accounts:
                 if i.acc_id == acc_num:
                     print("found account")
                     return i
-            print("cant find account")
             return 1
         else:
-            print("there are no records in the account list")
             return 1
 
     def write_account(self, account):
+        """
+        Takes an account object as a parameter, attempts to write the account details to the csv file.
+        If it can't find the file will create a new file a added the account details to it.
+        If it finds the file will append the details to the end of the file.
+        The csv file use '|' as its delimiter.
+        :param account:
+        :return:
+        """
         if not os.path.isfile(self.account_file):
             with open(self.account_file, "w", newline='') as acc:
                 csv_write = csv.DictWriter(acc, fieldnames=self.CSV_HEADER, delimiter='|')
@@ -73,11 +112,11 @@ class AccountManager:
                     csv_write.writeheader()
                 csv_write.writerow(account.account_dict())
 
-
     def amend_balance(self, acc_id, amount):
         """
-        Has the account ID and amount the balance has to be changed by as parameters. Use the acc_id to get an Account
-        object. Amend the account balance. On success returns an updated Account object.
+        Takes the  account ID and amount the balance has to be changed by as parameters.
+        Use the acc_id to get an Account object.
+        Amend the account balance. On success returns an updated Account object.
         Returns 1 if the acc_id was not found, 2 if the account csv file was not found.
         :param acc_id:
         :param amount:
@@ -87,7 +126,7 @@ class AccountManager:
         if acc == 1 or acc == 2:
             return acc
         else:
-            acc.set_balance(acc_id)
+            acc.set_balance(amount)
             self.update_csv(acc_id)
             return acc
 
@@ -134,4 +173,3 @@ class AccountManager:
                     writer.writerows(output)
             else:
                 return acc
-
