@@ -10,6 +10,7 @@ from VerifyBlock import VerifyBlock
 from Block import Block
 from AccountManager import AccountManager
 import time
+import json
 
 
 class Blockchain:
@@ -28,14 +29,20 @@ class Blockchain:
     def genesis_block(self):
         """
         Creates a genesis block on the blockchain.
-        Returns a string "Success" if block is created and "Error" if it falls.
+        Returns True if Successful, False it it fails.
         :return:
         """
+        trans = self.transaction_json(0, 0, 1000000, "Genesis Block!")
+        if self.mine_transaction(trans) == "Success":
+            return True
+        else:
+            return False
+
+    def mine_transaction(self, trans):
         start_time = time.monotonic()
-        trans = Transaction(0, 0, 1000000, "Genesis Block!", self.previous_hash).transaction_json()
-        hash_data = Miner().mining(trans, self.difficulty)
+        hash_data = Miner().mining(trans, self.previous_hash)
         end_time = time.monotonic()
-        if self. verify_hash(trans, hash_data):
+        if self.verify_hash(trans, hash_data):
             new_blk = Block(self.block_number, hash_data[0], time.time(), hash_data[1], end_time - start_time,
                             trans, self.BLK_FILE)
             self.increase_block_number()
@@ -45,6 +52,7 @@ class Blockchain:
             return "Success"
         else:
             return "Error"
+
 
     def create_block(self, trans, blk_hash, nonce):
 
@@ -96,15 +104,36 @@ class Blockchain:
         """
         self.previous_hash = new_hash
 
+    def transaction_json(self, from_acc, to_acc, amount, note):
+        """
+        Takes 4 parameters. 1 is an integer for the from account, 2 an integer for to account,
+        3, integer for a value of the transaction and 4 string for the note.
+        Returns a string of a json of the transaction data.
+        :param from_acc:
+        :param to_acc:
+        :param amount:
+        :param note:
+        :return:
+        """
+        trans_json = json.dumps({"Previous Hash": self.previous_hash, "From Account": from_acc,
+                                 "To Account": to_acc, "Amount": amount, "Note": note})
+        return trans_json
+
+    def test_funds(self, from_acc, amount):
+        if self.acc_manager.get_account(from_acc).balance >= amount:
+            return True
+        else:
+            return False
+
 bc = Blockchain()
+print(bc.transaction_json(1,2, 100, "Note ya"))
 
-
-# bc.first_accounts()
-# bc.add_account("Hannah")
-file = bc.acc_manager.get_account(2)
-print(file.account_dict())
-bc.acc_manager.amend_balance(4, 100)
-
+# # bc.first_accounts()
+# # bc.add_account("Hannah")
 # file = bc.acc_manager.get_account(2)
 # print(file.account_dict())
+# bc.acc_manager.amend_balance(4, 100)
+#
+# # file = bc.acc_manager.get_account(2)
+# # print(file.account_dict())
 
