@@ -5,12 +5,13 @@
 # Course: DT249/4
 
 from Miner import Miner
-from Transaction import Transaction
 from VerifyBlock import VerifyBlock
 from Block import Block
 from AccountManager import AccountManager
 import time
 import json
+import os
+import csv
 
 
 class Blockchain:
@@ -32,15 +33,16 @@ class Blockchain:
         Returns True if Successful, False it it fails.
         :return:
         """
-        trans = self.transaction_json(0, 0, 1000000, "Genesis Block!")
+        trans = self.transaction_json(1, 1, 1000000, "Genesis Block!")
         if self.mine_transaction(trans) == "Success":
+            self.acc_manager.amend_balance(1, 1000000)
             return True
         else:
             return False
 
     def mine_transaction(self, trans):
         start_time = time.monotonic()
-        hash_data = Miner().mining(trans, self.previous_hash)
+        hash_data = Miner().mining(trans, self.difficulty)
         end_time = time.monotonic()
         if self.verify_hash(trans, hash_data):
             new_blk = Block(self.block_number, hash_data[0], time.time(), hash_data[1], end_time - start_time,
@@ -54,7 +56,7 @@ class Blockchain:
             return "Error"
 
 
-    def create_block(self, trans, blk_hash, nonce):
+    def create_block(self, trans):
 
         return
 
@@ -125,8 +127,46 @@ class Blockchain:
         else:
             return False
 
+    def get_block_by_id(self, blk_num):
+        """
+        Searches the Blockchain file for the block data of a block number.
+        :param blk_num:
+        :return:
+        """
+        data = self.read_blk('Block Number', blk_num)
+        return data
+
+    def get_block_by_hash(self, blk_hash):
+        """
+        Searches for a block in the Blockchain file using its hash value.
+        :param blk_hash:
+        :return:
+        """
+        data = self.read_blk('Block Hash', blk_hash)
+        return data
+
+    def read_blk(self, key, value):
+        """
+        Reads the lines in the blockchain file, search for a Block using its key value pair.
+        Returns the line if found, 1 if data not found and 2 if the blockchain file wa not found.
+        :param key:
+        :param value:
+        :return:
+        """
+        if os.path.isfile(self.BLK_FILE):
+            with open(self.BLK_FILE, 'r') as read:
+                csv_read = csv.DictReader(read, delimiter="|")
+                for line in csv_read:
+                    if line[key] == value:
+                        return line
+                    else:
+                        return 1
+        else:
+            return 2
+
 bc = Blockchain()
-print(bc.transaction_json(1,2, 100, "Note ya"))
+# print(bc.transaction_json(1,2, 100, "Note ya"))
+bc.genesis_block()
 
 # # bc.first_accounts()
 # # bc.add_account("Hannah")
