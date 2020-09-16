@@ -34,7 +34,7 @@ class Block:
                 csv_write.writerow(self.get_csv_dict())
         else:
             with open(self.chain_file, "a", newline='') as bc:
-                csv_write = csv.writer(bc, delimiter="|")
+                csv_write = csv.DictWriter(bc, fieldnames=self.CSV_HEADER, delimiter="|")
                 csv_write.writerow(self.get_csv_dict())
 
         return

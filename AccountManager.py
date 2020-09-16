@@ -32,7 +32,7 @@ class AccountManager:
         Take the name of the account holder and creates a new Account object for it,
         adds the object to the accounts list. Call the write_account method to save the details to file.
         Increases the last_id attribute by one.
-        Returns 3 for successful completion.
+        Returns the account object on completion.
         :param name:
         :return:
         """
@@ -41,7 +41,7 @@ class AccountManager:
         self.last_id += 1
         self.write_account(new_acc)
 
-        return 3
+        return new_acc
 
     def get_last_id(self):
         """

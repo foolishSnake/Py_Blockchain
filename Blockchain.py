@@ -33,9 +33,11 @@ class Blockchain:
         Returns True if Successful, False it it fails.
         :return:
         """
-        trans = self.transaction_json(1, 1, 1000000, "Genesis Block!")
+        open_balance = 1000000
+        acc = self.acc_manager.add_account("System")
+        trans = self.transaction_json(acc.acc_id, acc.acc_id, open_balance, "Genesis Block!")
         if self.mine_transaction(trans) == "Success":
-            self.acc_manager.amend_balance(1, 1000000)
+            self.acc_manager.amend_balance(acc.acc_id, open_balance)
             return True
         else:
             return False
@@ -55,19 +57,33 @@ class Blockchain:
         else:
             return "Error"
 
-
-    def create_block(self, trans):
-
-        return
-
+    def create_block(self, from_acc, to_acc, amount, note):
+        if self.test_funds(from_acc, amount):
+            trans = self.transaction_json(from_acc, to_acc, amount, note)
+            if self.mine_transaction(trans) == "Success":
+                self.acc_manager.amend_balance(from_acc, amount * -1)
+                self.acc_manager.amend_balance(to_acc, amount)
+            else:
+                return 5
+        else:
+            return 4
+ 
     def first_accounts(self):
         """
-        This method is used to create 3 accounts, well only be called if there is no account file.
+        This method is used to create 2 accounts. Both account will have be given a balance of 100
+        well only be called if there is no account file.
+
         :return:
         """
-        self.acc_manager.add_account("System")
-        self.acc_manager.add_account("Alice")
-        self.acc_manager.add_account("Bob")
+        buy_in = 100
+        acc_alice = self.acc_manager.add_account("Alice")
+        trans_alice = self.transaction_json(1, acc_alice.acc_id, buy_in, "Buy In")
+        if self.mine_transaction(trans_alice) == "Success":
+            self.acc_manager.amend_balance(acc_alice.acc_id, buy_in)
+        acc_bob = self.acc_manager.add_account("Bob")
+        trans_bob = self.transaction_json(1, acc_bob.acc_id, buy_in, "Buy In")
+        if self.mine_transaction(trans_bob) == "Success":
+            self.acc_manager.amend_balance(acc_bob.acc_id, buy_in)
 
     def add_account(self, name):
         """
@@ -167,6 +183,8 @@ class Blockchain:
 bc = Blockchain()
 # print(bc.transaction_json(1,2, 100, "Note ya"))
 bc.genesis_block()
+bc.first_accounts()
+bc.create_block(2, 4, 50, "Sale of Car.")
 
 # # bc.first_accounts()
 # # bc.add_account("Hannah")
