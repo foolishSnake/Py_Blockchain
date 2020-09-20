@@ -85,6 +85,8 @@ class Blockchain:
         if self.mine_transaction(trans_bob) == "Success":
             self.acc_manager.amend_balance(acc_bob.acc_id, buy_in)
 
+        return True
+
     def add_account(self, name):
         """
         Creates a new account.
@@ -179,6 +181,19 @@ class Blockchain:
                         return 1
         else:
             return 2
+
+    def test_bc_file(self, file):
+        if os.path.isfile(file):
+            return True
+        else:
+            return False
+
+    def test_bc_file_data(self, file):
+        if os.path.getsize(file) != 0:
+            return True
+        else:
+            return False
+
 
 bc = Blockchain()
 # print(bc.transaction_json(1,2, 100, "Note ya"))

@@ -4,9 +4,16 @@ import tkinter.font as tk_font
 from tkinter import *
 
 
-
-
 class BlockGUI:
+
+    def __init__(self, blockchain):
+        self.blockchain = blockchain
+
+    def test_account_id(self, blockchain, acc_id):
+        if blockchain.acc_manager.get_account(acc_id) is (1 or 2):
+            return False
+        else:
+            return True
 
     def dashboard(self):
 
@@ -104,11 +111,10 @@ class BlockGUI:
         submit_b = Button(transaction_frame, text="Submit")
         submit_b.grid(row=8, column=0, pady=2, padx=2, columnspan=2, sticky=W + E + N + S)
 
-
         root.mainloop()
 
-run = BlockGUI()
-run.dashboard()
+
+
 
     # lable_num_blk = Label(root, text="Number of blocks - {}".format(0))
     # lable_num_blk['font'] = font_size
