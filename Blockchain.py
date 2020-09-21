@@ -17,7 +17,9 @@ import csv
 class Blockchain:
     NAME = "Airgead Crypto"
     block_number = 0
-    difficulty = 0
+    difficulty = 1
+    average_creation_time = 0.0
+    last_blk_creation_time = 0.0
     ACC_FILE = "AirgeadCryptoAccount.csv"
     BLK_FILE = "AirgeadCryptoBlockchain.csv"
     previous_hash = "0000000000000000000000000000000000000000000000000000000000000000"
@@ -26,6 +28,7 @@ class Blockchain:
 
     def __init__(self):
         self.acc_manager = AccountManager(self.ACC_FILE)
+        self.set_block_number()
 
     def genesis_block(self):
         """
@@ -182,17 +185,48 @@ class Blockchain:
         else:
             return 2
 
-    def test_bc_file(self, file):
+    @staticmethod
+    def test_bc_file(file):
         if os.path.isfile(file):
             return True
         else:
             return False
 
-    def test_bc_file_data(self, file):
+    @staticmethod
+    def test_bc_file_data(file):
         if os.path.getsize(file) != 0:
             return True
         else:
             return False
+
+    def set_block_number(self):
+        block_number = 0
+        if self.test_bc_file(self.BLK_FILE) and self.test_bc_file_data(self.BLK_FILE):
+            with open(self.BLK_FILE, 'r') as read:
+                csv_read = csv.DictReader(read, delimiter="|")
+                for line in csv_read:
+                    block_number = line["Block Number"]
+                self.block_number = block_number
+        else:
+            self.block_number = block_number
+
+    def set_average_time(self):
+        """
+        Attempts to read the blockchain file to find the average creation time of a block.
+        Set the attribute self.average_creation_time with the mean.
+        :return:
+        """
+        average_time = 0.0
+        if self.test_bc_file(self.BLK_FILE) and self.test_bc_file_data(self.BLK_FILE):
+            with open(self.BLK_FILE, 'r') as read:
+                csv_read = csv.DictReader(read, delimiter="|")
+                for line in csv_read:
+                    average_time += line["Creation Time"]
+                    self.last_blk_creation_time = line["Creation Time"]
+                self.average_creation_time = average_time / self.block_number
+        else:
+            self.average_creation_time = average_time
+
 
 
 bc = Blockchain()

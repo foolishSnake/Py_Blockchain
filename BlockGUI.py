@@ -9,7 +9,8 @@ class BlockGUI:
     def __init__(self, blockchain):
         self.blockchain = blockchain
 
-    def test_account_id(self, blockchain, acc_id):
+    @staticmethod
+    def test_account_id(blockchain, acc_id):
         if blockchain.acc_manager.get_account(acc_id) is (1 or 2):
             return False
         else:
