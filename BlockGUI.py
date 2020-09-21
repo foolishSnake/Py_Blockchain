@@ -2,19 +2,21 @@ import tkinter as tk
 from tkinter.ttk import *
 import tkinter.font as tk_font
 from tkinter import *
+from Blockchain import Blockchain
 
 
 class BlockGUI:
 
-    def __init__(self, blockchain):
-        self.blockchain = blockchain
-
+    # def __init__(self, blockchain):
+    #     self.blockchain = blockchain
+    blockchain = Blockchain()
     @staticmethod
     def test_account_id(blockchain, acc_id):
         if blockchain.acc_manager.get_account(acc_id) is (1 or 2):
             return False
         else:
             return True
+
 
     def dashboard(self):
 
@@ -39,23 +41,31 @@ class BlockGUI:
 
         lable_top1 = Label(top_frame, text="Mining Difficulty:", anchor="center")
         lable_top1.grid(row=0, column=0, padx=3)
-        entry_top1 = Entry(top_frame)
+        entry_top1 = Entry(top_frame, justify='center')
         entry_top1.grid(row=1, column=0, sticky=W+E, padx=3, pady=2)
+        entry_top1.delete(0, END)
+        entry_top1.insert(0, self.blockchain.difficulty)
 
         lable_top2 = Label(top_frame, text="Number of Blocks:", anchor="center")
         lable_top2.grid(row=0, column=1, padx=3)
-        entry_top2 = Entry(top_frame)
+        entry_top2 = Entry(top_frame, justify='center')
         entry_top2.grid(row=1, column=1, sticky=W+E, padx=3, pady=2)
+        entry_top2.delete(0, END)
+        entry_top2.insert(0, (self.blockchain.block_number + 1))
 
         lable_top3 = Label(top_frame, text="Creation time of last Block:", anchor="center")
         lable_top3.grid(row=0, column=2, padx=3)
-        entry_top3 = Entry(top_frame)
+        entry_top3 = Entry(top_frame, justify='center')
         entry_top3.grid(row=1, column=2, sticky=W+E, padx=3, pady=2)
+        entry_top3.delete(0, END)
+        entry_top3.insert(0, self.blockchain.last_blk_creation_time)
 
         lable_top4 = Label(top_frame, text="Average Block Creation time:", anchor="center")
         lable_top4.grid(row=0, column=3, padx=3)
-        entry_top4 = Entry(top_frame)
+        entry_top4 = Entry(top_frame, justify='center')
         entry_top4.grid(row=1, column=3, sticky=W+E, padx=3, pady=2)
+        entry_top4.delete(0, END)
+        entry_top4.insert(0, self.blockchain.average_creation_time)
 
         large_frame = Frame(parent_frame, highlightbackground="black", highlightcolor="black", highlightthickness=1)
         large_frame.grid(row=4, column=0, padx=2, columnspan=4, pady=2)
@@ -114,7 +124,8 @@ class BlockGUI:
 
         root.mainloop()
 
-
+gui = BlockGUI()
+gui.dashboard()
 
 
     # lable_num_blk = Label(root, text="Number of blocks - {}".format(0))

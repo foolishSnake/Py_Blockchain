@@ -29,6 +29,7 @@ class Blockchain:
     def __init__(self):
         self.acc_manager = AccountManager(self.ACC_FILE)
         self.set_block_number()
+        self.set_average_time()
 
     def genesis_block(self):
         """
@@ -205,7 +206,7 @@ class Blockchain:
             with open(self.BLK_FILE, 'r') as read:
                 csv_read = csv.DictReader(read, delimiter="|")
                 for line in csv_read:
-                    block_number = line["Block Number"]
+                    block_number = int(line["Block Number"])
                 self.block_number = block_number
         else:
             self.block_number = block_number
@@ -221,19 +222,19 @@ class Blockchain:
             with open(self.BLK_FILE, 'r') as read:
                 csv_read = csv.DictReader(read, delimiter="|")
                 for line in csv_read:
-                    average_time += line["Creation Time"]
-                    self.last_blk_creation_time = line["Creation Time"]
+                    average_time += float(line["Creation Time"])
+                    self.last_blk_creation_time = float(line["Creation Time"])
                 self.average_creation_time = average_time / self.block_number
         else:
             self.average_creation_time = average_time
 
 
 
-bc = Blockchain()
-# print(bc.transaction_json(1,2, 100, "Note ya"))
-bc.genesis_block()
-bc.first_accounts()
-bc.create_block(2, 4, 50, "Sale of Car.")
+# bc = Blockchain()
+# # print(bc.transaction_json(1,2, 100, "Note ya"))
+# bc.genesis_block()
+# bc.first_accounts()
+# bc.create_block(2, 4, 50, "Sale of Car.")
 
 # # bc.first_accounts()
 # # bc.add_account("Hannah")
