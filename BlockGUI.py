@@ -3,19 +3,47 @@ from tkinter.ttk import *
 import tkinter.font as tk_font
 from tkinter import *
 from Blockchain import Blockchain
+from Account import Account
 
 
 class BlockGUI:
 
-    # def __init__(self, blockchain):
+    def __init__(self):
+
     #     self.blockchain = blockchain
-    blockchain = Blockchain()
+        self.blockchain = Blockchain()
+        self.acc_entry = None
+        self.blk_entry = None
+        self.mining_entry = None
+        self.output_text = None
+        self.from_acc_e = None
+        self.to_acc_e = None
+        self.amount_e = None
+        self.trans_text = None
+        self.ERRORS = ["\nEmpty Input!\nPlease Enter A Valid Input!","\nSorry we could not find account "]
+
     @staticmethod
     def test_account_id(blockchain, acc_id):
         if blockchain.acc_manager.get_account(acc_id) is (1 or 2):
             return False
         else:
             return True
+
+    def display_acc(self):
+        acc_id = self.acc_entry.get()
+        if len(acc_id) == 0:
+            self.output_text.delete(0, END)
+            self.output_text.insert(0, self.ERRORS[0])
+        elif acc_id.isdigit():
+            acc = self.blockchain.blockchain.acc_manager.get_account(int(acc_id))
+            if acc is (1 or 2):
+                self.output_text.delete(0, END)
+                self.output_text.insert(0, (self.ERRORS[1] + acc_id))
+            else:
+                self.output_text.delete(0, END)
+                outout_str = "Account Detailes\nAccount ID:{:>12}\nName:{:>12}\nBalance{:>12}"\
+                    .format(acc.acc_id, acc.name, acc.balance)
+                self.output_text.insert(0, outout_str)
 
 
     def dashboard(self):
@@ -29,39 +57,38 @@ class BlockGUI:
 
         image_frame = Frame(root)
         image_frame.grid(row=0, column=0, columnspan=4, rowspan=2)
-        lable_image = Label(image_frame, image=heading)
-        lable_image.grid(row=0, column=0, columnspan=4, rowspan=2, sticky=W)
+        label_image = Label(image_frame, image=heading)
+        label_image.grid(row=0, column=0, columnspan=4, rowspan=2, sticky=W)
 
         parent_frame = Frame(root)
         parent_frame.grid(row=3, column=0, padx=2, pady=2)
 
-
         top_frame = Frame(parent_frame, highlightbackground="black", highlightcolor="black", highlightthickness=1)
         top_frame.grid(row=2, column=0, columnspan=4, rowspan=2, pady=2)
 
-        lable_top1 = Label(top_frame, text="Mining Difficulty:", anchor="center")
-        lable_top1.grid(row=0, column=0, padx=3)
+        label_top1 = Label(top_frame, text="Mining Difficulty:", anchor="center")
+        label_top1.grid(row=0, column=0, padx=3)
         entry_top1 = Entry(top_frame, justify='center')
         entry_top1.grid(row=1, column=0, sticky=W+E, padx=3, pady=2)
         entry_top1.delete(0, END)
         entry_top1.insert(0, self.blockchain.difficulty)
 
-        lable_top2 = Label(top_frame, text="Number of Blocks:", anchor="center")
-        lable_top2.grid(row=0, column=1, padx=3)
+        label_top2 = Label(top_frame, text="Number of Blocks:", anchor="center")
+        label_top2.grid(row=0, column=1, padx=3)
         entry_top2 = Entry(top_frame, justify='center')
         entry_top2.grid(row=1, column=1, sticky=W+E, padx=3, pady=2)
         entry_top2.delete(0, END)
         entry_top2.insert(0, (self.blockchain.block_number + 1))
 
-        lable_top3 = Label(top_frame, text="Creation time of last Block:", anchor="center")
-        lable_top3.grid(row=0, column=2, padx=3)
+        label_top3 = Label(top_frame, text="Creation time of last Block:", anchor="center")
+        label_top3.grid(row=0, column=2, padx=3)
         entry_top3 = Entry(top_frame, justify='center')
         entry_top3.grid(row=1, column=2, sticky=W+E, padx=3, pady=2)
         entry_top3.delete(0, END)
         entry_top3.insert(0, self.blockchain.last_blk_creation_time)
 
-        lable_top4 = Label(top_frame, text="Average Block Creation time:", anchor="center")
-        lable_top4.grid(row=0, column=3, padx=3)
+        label_top4 = Label(top_frame, text="Average Block Creation time:", anchor="center")
+        label_top4.grid(row=0, column=3, padx=3)
         entry_top4 = Entry(top_frame, justify='center')
         entry_top4.grid(row=1, column=3, sticky=W+E, padx=3, pady=2)
         entry_top4.delete(0, END)
@@ -75,21 +102,21 @@ class BlockGUI:
 
         acc_button = Button(info_frame, text="Display Account details:")
         acc_button.grid(row=0, column=0, padx=2, pady=2, sticky="ew")
-        acc_entry =Entry(info_frame)
-        acc_entry.grid(row=0, column=1, padx=2, pady=2)
+        self.acc_entry = Entry(info_frame)
+        self.acc_entry.grid(row=0, column=1, padx=2, pady=2)
 
         blk_button = Button(info_frame, text="Display Block details:")
         blk_button.grid(row=1, column=0, padx=2, pady=2, sticky="ew")
-        blk_entry = Entry(info_frame)
-        blk_entry.grid(row=1, column=1, padx=2, pady=2)
+        self.blk_entry = Entry(info_frame)
+        self.blk_entry.grid(row=1, column=1, padx=2, pady=2)
 
         mining_button = Button(info_frame, text="Set Mining difficulty")
         mining_button.grid(row=2, column=0, padx=2, pady=2, sticky="ew")
-        mining_entry = Entry(info_frame)
-        mining_entry.grid(row=2, column=1, padx=2, pady=2)
+        self.mining_entry = Entry(info_frame)
+        self.mining_entry.grid(row=2, column=1, padx=2, pady=2)
 
-        output_text = Text(info_frame, height=10, width=34)
-        output_text.grid(row=3, column=0,columnspan=2, padx=2,pady=2)
+        self.output_text = Text(info_frame, height=10, width=34)
+        self.output_text.grid(row=3, column=0,columnspan=2, padx=2,pady=2)
 
         transaction_frame = Frame(large_frame, highlightbackground="black", highlightcolor="black", highlightthickness=1)
         transaction_frame.grid(row=0, column=3, columnspan=2, padx=3, pady=3)
@@ -101,23 +128,23 @@ class BlockGUI:
 
         from_acc_l = Label(transaction_frame, text="From Account:")
         from_acc_l.grid(row=1, column=0, sticky=W, pady=2, padx=2)
-        from_acc_e = Entry(transaction_frame)
-        from_acc_e.grid(row=1, column=1, sticky=W, pady=2, padx=2)
+        self.from_acc_e = Entry(transaction_frame)
+        self.from_acc_e.grid(row=1, column=1, sticky=W, pady=2, padx=2)
 
         to_acc_l = Label(transaction_frame, text="To Account:")
         to_acc_l.grid(row=2, column=0, sticky=W, pady=2, padx=2)
-        to_acc_e = Entry(transaction_frame)
-        to_acc_e.grid(row=2, column=1, sticky=W, pady=2, padx=2)
+        self.to_acc_e = Entry(transaction_frame)
+        self.to_acc_e.grid(row=2, column=1, sticky=W, pady=2, padx=2)
 
         amount_l = Label(transaction_frame, text="Enter Transaction Amount:")
         amount_l.grid(row=3, column=0, sticky=W, pady=2, padx=2)
-        amount_e = Entry(transaction_frame)
-        amount_e.grid(row=3, column=1, sticky=W, pady=2, padx=2)
+        self.amount_e = Entry(transaction_frame)
+        self.amount_e.grid(row=3, column=1, sticky=W, pady=2, padx=2)
 
         trans_l = Label(transaction_frame, text="Enter Transaction Details:", anchor=CENTER)
         trans_l.grid(row=4, column=0, pady=2, padx=2, columnspan=2)
-        trans_text = Text(transaction_frame, height=6, width=34)
-        trans_text.grid(row=5, column=0, pady=2, padx=2, rowspan=3, columnspan=2, sticky=W)
+        self.trans_text = Text(transaction_frame, height=6, width=34)
+        self.trans_text.grid(row=5, column=0, pady=2, padx=2, rowspan=3, columnspan=2, sticky=W)
 
         submit_b = Button(transaction_frame, text="Submit")
         submit_b.grid(row=8, column=0, pady=2, padx=2, columnspan=2, sticky=W + E + N + S)
