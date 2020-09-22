@@ -4,6 +4,7 @@ import tkinter.font as tk_font
 from tkinter import *
 from Blockchain import Blockchain
 from Account import Account
+import time
 
 
 class BlockGUI:
@@ -20,7 +21,8 @@ class BlockGUI:
         self.to_acc_e = None
         self.amount_e = None
         self.trans_text = None
-        self.ERRORS = ["\nEmpty Input!\nPlease Enter A Valid Input!","\nSorry we could not find account "]
+        self.ERRORS = ["\nEmpty Input!\nPlease Enter A Valid Input!","\nSorry we could not find account ",
+                        "Please Enter a Valid Blocknumber!", "Could Not Find Block ", "File Not Found!"]
 
     @staticmethod
     def test_account_id(blockchain, acc_id):
@@ -31,19 +33,37 @@ class BlockGUI:
 
     def display_acc(self):
         acc_id = self.acc_entry.get()
+        output_str = ""
         if len(acc_id) == 0:
-            self.output_text.delete(0, END)
-            self.output_text.insert(0, self.ERRORS[0])
+            output_str = self.ERRORS[0] + acc_id
         elif acc_id.isdigit():
             acc = self.blockchain.blockchain.acc_manager.get_account(int(acc_id))
             if acc is (1 or 2):
-                self.output_text.delete(0, END)
-                self.output_text.insert(0, (self.ERRORS[1] + acc_id))
+                output_str = self.ERRORS[1] + acc_id
             else:
-                self.output_text.delete(0, END)
-                outout_str = "Account Detailes\nAccount ID:{:>12}\nName:{:>12}\nBalance{:>12}"\
+                output_str = "Account Details\nAccount ID:{:>12}\nName:{:>12}\nBalance{:>12}"\
                     .format(acc.acc_id, acc.name, acc.balance)
-                self.output_text.insert(0, outout_str)
+        self.output_text.delete(0, END)
+        self.output_text.insert(0, output_str)
+
+    def display_blk(self):
+        blk = self.blk_entry.get()
+        output_str = ""
+        if len(blk) == 0:
+            output_str = self.ERRORS[0]
+        elif blk.isdigit():
+            if int(blk) > self.blockchain.block_number:
+                output_str = self.ERRORS[3]
+        else:
+            blk_data = self.blockchain.get_block_by_id(int(blk)):
+            if blk_data == 1:
+                output_str = self.ERRORS[3] + blk
+            elif blk_data == 2:
+                output_str = self.ERRORS[4]
+            else:
+                output_str = "".format(blk_data['Block Number'], blk_data['Block Hash'], blk_data['Nonce'],
+                                       time.ctime(blk_data['Time Stamp']), )
+
 
 
     def dashboard(self):
