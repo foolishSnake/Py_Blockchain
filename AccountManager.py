@@ -54,10 +54,10 @@ class AccountManager:
                 csv_read = csv.DictReader(read, delimiter="|")
                 for line in csv_read:
                     self.last_id = int(line['Account ID'])
-                return 3
+                return None
 
         else:
-            return 2
+            return None
 
     def get_account_file(self, acc_num):
         """
@@ -77,9 +77,9 @@ class AccountManager:
                         self.accounts.append(new_acc)
                         return new_acc
                 else:
-                    return 1
+                    return None
         else:
-            return 2
+            return None
 
     def get_account_list(self, acc_num):
         """
@@ -91,11 +91,9 @@ class AccountManager:
         if len(self.accounts) > 0:
             for i in self.accounts:
                 if i.acc_id == acc_num:
-                    print("found account")
                     return i
-            return 1
         else:
-            return 1
+            return None
 
     def write_account(self, account):
         """
@@ -129,8 +127,8 @@ class AccountManager:
         :return:
         """
         acc = self.get_account(acc_id)
-        if acc == 1 or acc == 2:
-            return acc
+        if not acc:
+            return None
         else:
             acc.set_balance(amount)
             self.update_csv(acc)
@@ -146,9 +144,10 @@ class AccountManager:
         :return:
         """
         acc_list = self.get_account_list(acc_id)
-        if acc_list is (1 or 2):
+        if not acc_list:
             acc_list = self.get_account_file(acc_id)
-            return acc_list
+            if not acc_list:
+                return None
         else:
             return acc_list
 
@@ -161,7 +160,7 @@ class AccountManager:
         :return:
         """
         if not os.path.isfile(self.account_file):
-            return 2
+            return None
         else:
             if type(acc) == Account:
                 output = []
@@ -178,4 +177,4 @@ class AccountManager:
                     writer.writeheader()
                     writer.writerows(output)
             else:
-                return acc
+                return None

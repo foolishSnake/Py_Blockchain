@@ -22,7 +22,7 @@ class BlockGUI:
         self.amount_e = None
         self.trans_text = None
         self.ERRORS = ["\nEmpty Input!\nPlease Enter A Valid Input!","\nSorry we could not find account ",
-                        "Please Enter a Valid Blocknumber!", "Could Not Find Block ", "File Not Found!"]
+                        "Please Enter a Valid Blocknumber!", "Could Not Find Block ", "File Not Found!", "You can only enter a number!"]
 
     @staticmethod
     def test_account_id(blockchain, acc_id):
@@ -30,6 +30,23 @@ class BlockGUI:
             return False
         else:
             return True
+
+    def input_error_int(self, string):
+        if len(string) == 0:
+            return self.ERRORS[0]
+        elif not acc_id.isdigit():
+            return self.ERRORS[5]
+        else:
+            return string
+
+    def set_difficulty(self):
+        new_difficulty = self.mining_entry.get()
+        output_srt = self.input_error_int(new_difficulty)
+        if output_srt == new_difficulty:
+            self.blockchain.difficulty = int(new_difficulty)
+            output_srt = "\nThe Mining Difficult is set to {}".fomat(new_difficulty)
+
+
 
     def display_acc(self):
         acc_id = self.acc_entry.get()
@@ -79,7 +96,7 @@ class BlockGUI:
         image_frame = Frame(root)
         image_frame.grid(row=0, column=0, columnspan=8, rowspan=2)
         label_image = Label(image_frame, image=heading)
-        label_image.grid(row=0, column=0, columnspan=8, rowspan=2, sticky=W)
+        label_image.grid(row=0, column=0, columnspan=8, rowspan=2, sticky=W+E)
 
         parent_frame = Frame(root)
         parent_frame.grid(row=3, column=0, padx=2, pady=2)
@@ -88,7 +105,7 @@ class BlockGUI:
         top_frame.grid(row=2, column=0, columnspan=8, rowspan=2, pady=2)
 
         label_top1 = Label(top_frame, text="Mining Difficulty:", anchor="center")
-        label_top1.grid(row=0, column=0, columnspan=2,padx=3)
+        label_top1.grid(row=0, column=0, columnspan=2,padx=3, sticky=W+E)
         entry_top1 = Entry(top_frame, justify='center')
         entry_top1.grid(row=1, column=0, columnspan=2, sticky=W+E, padx=3, pady=2)
         entry_top1.delete(0, END)
@@ -124,28 +141,32 @@ class BlockGUI:
         button_frame = Frame(info_frame)
         button_frame.grid(row=0, column=0, columnspan=3, padx=3, pady=3)
 
-        acc_button = Button(button_frame, text="Display Account details:",  command=self.display_acc)
-        acc_button.grid(row=0, column=0, columnspan=2,padx=2, pady=2, sticky="ew",)
+        heading_l = Label(button_frame, text="Quary Blockchain or Amend Mining Difficulty :", anchor=CENTER)
+        heading_l.grid(row=0, column=0, pady=2, padx=2, columnspan=8)
+
+        acc_l = Label(button_frame, text="Account No:", anchor=W)
+        acc_l.grid(row=1, column=0, pady=2, padx=2, columnspan=1)
         self.acc_entry = Entry(button_frame)
-        self.acc_entry.grid(row=1, column=0, columnspan=2, padx=2, pady=2)
+        self.acc_entry.grid(row=1, column=1, columnspan=1, padx=2, pady=2)
+        acc_button = Button(button_frame, text="Submit",  command=self.display_acc)
+        acc_button.grid(row=1, column=2, columnspan=1,padx=2, pady=2, sticky=W,)
 
-        blk_button = Button(button_frame, text="Get BLK by Number:")
-        blk_button.grid(row=0, column=2, columnspan=2, padx=2, pady=2, sticky="ew")
-        self.blk_entry = Entry(button_frame)
-        self.blk_entry.grid(row=1, column=2, columnspan=2, padx=2, pady=2)
-
-        blk_button = Button(button_frame, text="Get BLK by Hash:")
-        blk_button.grid(row=0, column=4, columnspan=2, padx=2, pady=2, sticky="ew")
-        self.blk_entry = Entry(button_frame)
-        self.blk_entry.grid(row=1, column=4, columnspan=2, padx=2, pady=2)
-
-        mining_button = Button(button_frame, text="Set Mining difficulty")
-        mining_button.grid(row=0, column=6, columnspan=2, padx=2, pady=2, sticky="ew")
+        mining_l = Label(button_frame, text="Mining Difficulty:", anchor=W)
+        mining_l.grid(row=1, column=3, pady=2, padx=2, columnspan=1)
         self.mining_entry = Entry(button_frame)
-        self.mining_entry.grid(row=1, column=6, columnspan=2, padx=2, pady=2)
+        self.mining_entry.grid(row=1, column=4, columnspan=1, padx=2, pady=2)
+        mining_button = Button(button_frame, text="Submit")
+        mining_button.grid(row=1, column=5, columnspan=1, padx=2, pady=2, sticky=W)
+
+        blk_l = Label(button_frame, text="Block No. / Hash:", anchor=W)
+        blk_l.grid(row=2, column=0, pady=2, padx=2, columnspan=1)
+        self.blk_entry = Entry(button_frame)
+        self.blk_entry.grid(row=2, column=1, columnspan=5, padx=2, pady=2, sticky=W+E)
+        blk_button = Button(button_frame, text="Submit")
+        blk_button.grid(row=2, column=7, columnspan=1, padx=2, pady=2, sticky=W)
 
         self.output_text = Text(button_frame, height=12, width=90)
-        self.output_text.grid(row=2, column=0,columnspan=8, padx=2,pady=2)
+        self.output_text.grid(row=3, column=0,columnspan=8, padx=2,pady=2)
 
         transaction_frame = Frame(large_frame, highlightbackground="black", highlightcolor="black", highlightthickness=1)
         transaction_frame.grid(row=3, column=0, columnspan=8, padx=3, pady=3)
@@ -172,7 +193,7 @@ class BlockGUI:
 
         trans_l = Label(transaction_frame, text="Enter Transaction Details:", anchor=CENTER)
         trans_l.grid(row=2, column=0, pady=2, padx=2, columnspan=8)
-        self.trans_text = Text(transaction_frame, height=8, width=90)
+        self.trans_text = Text(transaction_frame, height=5, width=90)
         self.trans_text.grid(row=3, column=0, pady=2, padx=2, rowspan=3, columnspan=8, sticky=W)
 
         submit_b = Button(transaction_frame, text="Submit")
