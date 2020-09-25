@@ -56,7 +56,7 @@ class BlockGUI:
             output_str = self.ERRORS[0] + acc_id
         elif acc_id.isdigit():
             acc = self.blockchain.acc_manager.get_account(int(acc_id))
-            if acc is (1 or 2):
+            if not acc:
                 output_str = self.ERRORS[1] + acc_id
             else:
                 output_str = "Account Details\n{:15}{}\n{:15}{}\n{:15}{}"\

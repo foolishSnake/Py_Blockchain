@@ -46,7 +46,8 @@ class AccountManager:
     def get_last_id(self):
         """
         Attempts to read the account csv file to get the value of the last account ID used.
-        Returns 3 if successful, Returns 2 if it fails to read the file.
+        If found sets the self.last_id attribute.
+        Returns None if it fails to read the file.
         :return:
         """
         if os.path.isfile(self.account_file):
@@ -63,7 +64,7 @@ class AccountManager:
         """
         Takes an integer value for the account ID, searches the account file for the account.
         If successful returns a Account object with account details and adds it to the accounts list.
-        If it fails will return 1 if it can't find the account or 2 if it can't find the file.
+        If it fails will return None if it can't find the account or can't find the file.
         :param acc_num:
         :return:
         """
@@ -84,7 +85,7 @@ class AccountManager:
     def get_account_list(self, acc_num):
         """
         Takes the account ID as a parameter and searches the accounts file list to find the account object.
-        On success returns an account object, if it falls to find the account returns 1
+        On success returns an account object, if it falls to find the account returns None
         :param acc_num:
         :return:
         """
@@ -121,7 +122,7 @@ class AccountManager:
         Takes the  account ID and amount the balance has to be changed by as parameters.
         Use the acc_id to get an Account object.
         Amend the account balance. On success returns an updated Account object.
-        Returns 1 if the acc_id was not found, 2 if the account csv file was not found.
+        Returns None if the acc_id was not found or account csv file was not found.
         :param acc_id:
         :param amount:
         :return:
@@ -139,7 +140,7 @@ class AccountManager:
         Takes the account ID and checks if that account is in the self.accounts list.
         If it is returns the object. If not, will attempt to read the accounts files, if it finds the
         account adds it values to an Account object and appends it to self.accounts return
-        the accounts object. Returns 1 if account is not found and 2 if account file is not found.
+        the accounts object. Returns None if account is  or file is not found.
         :param acc_id:
         :return:
         """
@@ -167,7 +168,6 @@ class AccountManager:
                 with open(self.account_file) as in_file:
                     reader = csv.DictReader(in_file, delimiter='|')
                     for line in reader:
-                        print(line)
                         if int(line['Account ID']) == acc.acc_id:
                             output.append(acc.account_dict())
                         else:
