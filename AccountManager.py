@@ -151,6 +151,7 @@ class AccountManager:
                 return None
         else:
             return acc_list
+        return acc_list
 
     def update_csv(self, acc):
         """

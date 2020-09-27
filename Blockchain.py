@@ -209,7 +209,7 @@ class Blockchain:
         """
         Takes 2 parameters, a string of the Key and the value to be searched for.
         Reads the lines in the blockchain file, search for a Block using its key value pair.
-        Returns the string for the line if found, None if data not found or if the blockchain file was not found.
+        Returns a dictionary for the line if found, None if data not found or if the blockchain file was not found.
         :param key:
         :param value:
         :return:
@@ -218,10 +218,10 @@ class Blockchain:
             with open(self.BLK_FILE, 'r') as read:
                 csv_read = csv.DictReader(read, delimiter="|")
                 for line in csv_read:
-                    if line[key] == value:
+                    if int(line[key]) == value:
                         return line
-                    else:
-                        return None
+                else:
+                    return None
         else:
             return None
 
@@ -284,7 +284,7 @@ class Blockchain:
                 for line in csv_read:
                     average_time += float(line["Creation Time"])
                     self.last_blk_creation_time = float(line["Creation Time"])
-                self.average_creation_time = average_time / self.block_number
+                self.average_creation_time = average_time / (self.block_number + 1)
         else:
             self.average_creation_time = average_time
 

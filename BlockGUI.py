@@ -5,6 +5,8 @@ from tkinter import *
 from Blockchain import Blockchain
 from Account import Account
 import time
+import json
+from datetime import datetime
 
 
 class BlockGUI:
@@ -13,6 +15,10 @@ class BlockGUI:
 
     #     self.blockchain = blockchain
         self.blockchain = Blockchain()
+        self.entry_top1 = None
+        self.entry_top2 = None
+        self.entry_top3 = None
+        self.entry_top4 = None
         self.acc_entry = None
         self.blk_entry = None
         self.mining_entry = None
@@ -22,31 +28,110 @@ class BlockGUI:
         self.amount_e = None
         self.trans_text = None
         self.ERRORS = ["\nEmpty Input!\nPlease Enter A Valid Input!","\nSorry we could not find account ",
-                        "Please Enter a Valid Blocknumber!", "Could Not Find Block ", "File Not Found!", "You can only enter a number!"]
+                        "Please Enter a Valid Block Number or Hash!", "Could Not Find Block ", "File Not Found!", "You can only enter a number!"]
 
     @staticmethod
     def test_account_id(blockchain, acc_id):
-        if blockchain.acc_manager.get_account(acc_id) is (1 or 2):
+        """
+        Take 2 parameters a Blockchain object and an int of an account ID.
+        Test if the account ID is valid.
+        Returns True if the account ID is valid and False id no account details are found.
+        :param blockchain:
+        :param acc_id:
+        :return:
+        """
+        if not blockchain.acc_manager.get_account(acc_id):
             return False
         else:
             return True
 
     def input_error_int(self, string):
+        """
+        Takes a string as a parameter. Test if the string is a number and if its an empty string.
+        If there are no errors Returns the parameter string. If there are error Returns a string given detail of the
+        error.
+        :param string:
+        :return:
+        """
         if len(string) == 0:
             return self.ERRORS[0]
-        elif not acc_id.isdigit():
+        elif not string.isdigit():
             return self.ERRORS[5]
         else:
             return string
+    def clear_entry(self, ent):
+        """
+        Take an entry object as a parameter.
+        Clears all text from the entry
+        :param ent:
+        :return:
+        """
+        ent.delete(0, END)
+
+    def update_entry(self, ent, output):
+        """
+        Takes 2 parameters a Entry object and the output text.
+        Clears the Entry box of text and writes the output to it.
+        :param ent:
+        :param output:
+        :return:
+        """
+        self.clear_entry(ent)
+        ent.insert(0, output)
+
+    def write_output_text(self, output_str):
+        """
+        Takes a string as parameter. Any text is the area is cleared and the parameter is writen to the
+        output_text area in the GUI.
+        :param output_str:
+        :return:
+        """
+        self.output_text.delete(1.0, END)
+        self.output_text.insert(1.0, output_str)
 
     def set_difficulty(self):
+        """
+        Reads the value in the mining Entry. tests if there is a valid input. If input is valid updates the the
+        self.difficulty attribute in the blockchain object. Gives a message saying the difficulty is updated. Displays
+        the new difficulty in the mining difficulty Entry on the top of the dashboard.
+        If there is an error in the input, given a meaasge detailing the issue in the output_text area.
+        :return:
+        """
         new_difficulty = self.mining_entry.get()
         output_srt = self.input_error_int(new_difficulty)
         if output_srt == new_difficulty:
             self.blockchain.difficulty = int(new_difficulty)
-            output_srt = "\nThe Mining Difficult is set to {}".fomat(new_difficulty)
+            output_srt = "\nThe Mining Difficult is set to {}".format(new_difficulty)
+        self.difficulty_entry()
+        self.write_output_text(output_srt)
+        self.clear_entry(self.mining_entry)
 
+    def get_blk_time(self):
+        """
+        This method is used to update the Entre for the time it took to create the last block on the blockchain.
+        Reads the time from the Blockchain attribute last_blk_creation_time.
+        Update the Entry with the last block creation time.
+        :return:
+        """
+        blk_time = self.blockchain.last_blk_creation_time
+        self.update_entry(self.entry_top3, blk_time)
 
+    def get_avg_time(self):
+        """
+        This method is used to update the Average ctraetion time Entry in the GUI.
+        Reads the blockchin average_cfreation_time attribute and use the data to update the Entry.
+        :return:
+        """
+        avg_time = self.blockchain.average_creation_time
+        self.update_entry(self.entry_top4, avg_time)
+
+    def difficulty_entry(self):
+        """
+        Claers the text in the Entry for the minning difficulty and then updates it with the current difficulty.
+        :return:
+        """
+        self.entry_top1.delete(0, END)
+        self.entry_top1.insert(0, self.blockchain.difficulty)
 
     def display_acc(self):
         acc_id = self.acc_entry.get()
@@ -59,30 +144,105 @@ class BlockGUI:
             if not acc:
                 output_str = self.ERRORS[1] + acc_id
             else:
-                output_str = "Account Details\n{:15}{}\n{:15}{}\n{:15}{}"\
+                output_str = "Account Details\n{:12}{}\n{:12}{}\n{:12}{}"\
                     .format("Account ID:", acc.acc_id, "Name:", acc.name, "Balance:", acc.balance)
-        self.output_text.delete(1.0, END)
-        self.output_text.insert(1.0, output_str)
+        self.write_output_text(output_str)
+
+    def get_number_blk(self):
+        """
+        Read the Blockchain attribute for the last block number and add 1 to it (First block is 0).
+        Use the block number to update the Number of block entry in the GUI.
+        :return:
+        """
+        num_blk = self.blockchain.block_number + 1
+        self.update_entry(self.entry_top2, num_blk)
 
     def display_blk(self):
-        blk = self.blk_entry.get()
+        """
+        Read the data entered in the Entry box for Blk / Hash.
+        Tests the input to see if its a hash or block number.
+        Attepts to read the blockchain file to find the block number or Hash. If found will dispaly the
+        block details in the text area, if noy displays a message.
+        :return:
+        """
         output_str = ""
-        if len(blk) == 0:
-            output_str = self.ERRORS[0]
-        elif blk.isdigit():
-            if int(blk) > self.blockchain.block_number:
+        blk = self.blk_entry.get()
+        if len(blk) == 64 and (not blk.isdigit()):
+            dict = self.blockchain.get_block_by_hash(blk)
+            if not dict:
                 output_str = self.ERRORS[3]
-        else:
-            blk_data = self.blockchain.get_block_by_id(int(blk))
-            if blk_data == 1:
-                output_str = self.ERRORS[3] + blk
-            elif blk_data == 2:
-                output_str = self.ERRORS[4]
             else:
-                output_str = "".format(blk_data['Block Number'], blk_data['Block Hash'], blk_data['Nonce'],
-                                       time.ctime(blk_data['Time Stamp']), )
+                output_str = self.dict_output(dict)
+        elif self.input_error_int(blk) == blk:
+            dict = self.blockchain.get_block_by_id(int(blk))
+            if not dict:
+                output_str = self.ERRORS[3]
+            else:
+                output_str = self.dict_output(dict)
+
+        self.clear_entry(self.blk_entry)
+        self.write_output_text(output_str)
 
 
+    def dict_output(self, dict):
+        """
+        Takes 1 parameter a dictonary of the data in a Block.
+        The dictonary data is format in a string.
+        Returns a string of the formated text.
+        :param dict:
+        :return:
+        """
+        str_dict = "Block Information:\n"
+        dict_trans = json.loads(dict['Block Data'])
+        for key, value in dict.items():
+            if key != 'Block Data':
+                if key == 'Time Stamp':
+                    str_dict += "{:<15}{}\n".format(key, datetime.utcfromtimestamp(float(value)))
+                else:
+                    str_dict += "{:<15}{}\n".format(key, value)
+        print(dict_trans)
+        for key, value in dict_trans.items():
+            str_dict += "{:<15}{}\n".format(key, value)
+
+        return str_dict
+
+    def add_transaction(self):
+        output_str = ""
+        ret = False
+        fields = ["From Accout ", "To Accout ", "Amount ", "Transaction Details "]
+        entrys = [self.from_acc_e, self.to_acc_e, self.amount_e, self.trans_text]
+        entrys_data = []
+        for index, i in enumerate(entrys):
+            entrys_data.append(i.get())
+            if index < 3:
+                temp = self.input_error_int(entrys_data[index])
+                if entrys_data[index] != temp:
+                    output_str += "{}{}\n".format(fields[index], temp)
+                    ret = True
+            else:
+                if len(entrys[index]) == 0:
+                    output_str += "{} Field Must Contain Some Text!".format(fields[index])
+                    ret = True
+        if ret:
+            for i in range(3):
+                self.clear_entry(entrys[i])
+            self.write_trans_text(output_str)
+            return
+        else:
+            if int(entrys_data[0] <= self.blockchain.acc_manager.last_id):
+                output_str +=
+                if int(entrys_data[1] <= self.blockchain.acc_manager.last_id):
+
+
+
+        from_str = self.input_error_int(from_acc)
+        if from_acc != from_str:
+            output_str += from_str
+
+
+    def write_trans_text(self, output):
+        self.trans_text.delete(1.0, END)
+        self.trans_text.insert(1.0, output)
 
     def dashboard(self):
 
@@ -106,31 +266,27 @@ class BlockGUI:
 
         label_top1 = Label(top_frame, text="Mining Difficulty:", anchor="center")
         label_top1.grid(row=0, column=0, columnspan=2,padx=3, sticky=W+E)
-        entry_top1 = Entry(top_frame, justify='center')
-        entry_top1.grid(row=1, column=0, columnspan=2, sticky=W+E, padx=3, pady=2)
-        entry_top1.delete(0, END)
-        entry_top1.insert(0, self.blockchain.difficulty)
+        self.entry_top1 = Entry(top_frame, justify='center')
+        self.entry_top1.grid(row=1, column=0, columnspan=2, sticky=W+E, padx=3, pady=2)
+        self.difficulty_entry()
 
         label_top2 = Label(top_frame, text="Number of Blocks:", anchor="center")
         label_top2.grid(row=0, column=2, columnspan=2,padx=3)
-        entry_top2 = Entry(top_frame, justify='center')
-        entry_top2.grid(row=1, column=2, columnspan=2,sticky=W+E, padx=3, pady=2)
-        entry_top2.delete(0, END)
-        entry_top2.insert(0, (self.blockchain.block_number + 1))
+        self.entry_top2 = Entry(top_frame, justify='center')
+        self.entry_top2.grid(row=1, column=2, columnspan=2,sticky=W+E, padx=3, pady=2)
+        self.get_number_blk()
 
         label_top3 = Label(top_frame, text="Creation time of last Block:", anchor="center")
         label_top3.grid(row=0, column=4, columnspan=2,padx=3)
-        entry_top3 = Entry(top_frame, justify='center')
-        entry_top3.grid(row=1, column=4, columnspan=2,sticky=W+E, padx=3, pady=2)
-        entry_top3.delete(0, END)
-        entry_top3.insert(0, self.blockchain.last_blk_creation_time)
+        self.entry_top3 = Entry(top_frame, justify='center')
+        self.entry_top3.grid(row=1, column=4, columnspan=2,sticky=W+E, padx=3, pady=2)
+        self.get_blk_time()
 
         label_top4 = Label(top_frame, text="Average Block Creation time:", anchor="center")
         label_top4.grid(row=0, column=6, columnspan=2, padx=3)
-        entry_top4 = Entry(top_frame, justify='center')
-        entry_top4.grid(row=1, column=6, columnspan=2, sticky=W+E, padx=3, pady=2)
-        entry_top4.delete(0, END)
-        entry_top4.insert(0, self.blockchain.average_creation_time)
+        self.entry_top4 = Entry(top_frame, justify='center')
+        self.entry_top4.grid(row=1, column=6, columnspan=2, sticky=W+E, padx=3, pady=2)
+        self.get_avg_time()
 
         large_frame = Frame(parent_frame, highlightbackground="black", highlightcolor="black", highlightthickness=1)
         large_frame.grid(row=4, column=0, padx=2, columnspan=8, pady=2)
@@ -155,14 +311,14 @@ class BlockGUI:
         mining_l.grid(row=1, column=3, pady=2, padx=2, columnspan=1)
         self.mining_entry = Entry(button_frame)
         self.mining_entry.grid(row=1, column=4, columnspan=1, padx=2, pady=2)
-        mining_button = Button(button_frame, text="Submit")
+        mining_button = Button(button_frame, text="Submit", command=self.set_difficulty)
         mining_button.grid(row=1, column=5, columnspan=1, padx=2, pady=2, sticky=W)
 
         blk_l = Label(button_frame, text="Block No. / Hash:", anchor=W)
         blk_l.grid(row=2, column=0, pady=2, padx=2, columnspan=1)
         self.blk_entry = Entry(button_frame)
         self.blk_entry.grid(row=2, column=1, columnspan=5, padx=2, pady=2, sticky=W+E)
-        blk_button = Button(button_frame, text="Submit")
+        blk_button = Button(button_frame, text="Submit", command=self.display_blk)
         blk_button.grid(row=2, column=7, columnspan=1, padx=2, pady=2, sticky=W)
 
         self.output_text = Text(button_frame, height=12, width=90)
