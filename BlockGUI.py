@@ -89,6 +89,19 @@ class BlockGUI:
         self.output_text.delete(1.0, END)
         self.output_text.insert(1.0, output_str)
 
+    def trans_text_write(self, entrys, output):
+        """
+        Takes 2 parameters list of the transaction Entrys and a String for the output text.
+        Iterates over the firts 3 elements clearing the text in the fields.
+        Clears the text from the last element the text area and write the ouput string to it.
+        :param entrys:
+        :param output:
+        :return:
+        """
+        for i in range(3):
+            self.clear_entry(entrys[i])
+        self.write_trans_text(output)
+
     def set_difficulty(self):
         """
         Reads the value in the mining Entry. tests if there is a valid input. If input is valid updates the the
@@ -212,35 +225,53 @@ class BlockGUI:
         fields = ["From Accout ", "To Accout ", "Amount ", "Transaction Details "]
         entrys = [self.from_acc_e, self.to_acc_e, self.amount_e, self.trans_text]
         entrys_data = []
+        test = entrys[0].get()
         for index, i in enumerate(entrys):
-            entrys_data.append(i.get())
             if index < 3:
+                entrys_data.append(i.get())
                 temp = self.input_error_int(entrys_data[index])
                 if entrys_data[index] != temp:
                     output_str += "{}{}\n".format(fields[index], temp)
                     ret = True
             else:
-                if len(entrys[index]) == 0:
+                entrys_data.append(i.get("1.0",END))
+                if len(entrys_data[index]) == 0:
                     output_str += "{} Field Must Contain Some Text!".format(fields[index])
                     ret = True
         if ret:
-            for i in range(3):
-                self.clear_entry(entrys[i])
-            self.write_trans_text(output_str)
+            self.trans_text_write(entrys, output_str)
             return
         else:
-            if int(entrys_data[0] <= self.blockchain.acc_manager.last_id):
-                output_str +=
-                if int(entrys_data[1] <= self.blockchain.acc_manager.last_id):
-
-
-
-        from_str = self.input_error_int(from_acc)
-        if from_acc != from_str:
-            output_str += from_str
-
+            if int(entrys_data[0]) > self.blockchain.acc_manager.last_id:
+                output_str = "We can not find the From Account {}!\n".format(entrys_data[0])
+                ret = True
+            elif not self.blockchain.test_funds(int(entrys_data[0]), int(entrys_data[2])):
+                output_str += "Account {} Does not have the funds for this transaction!\n".format(entrys_data[0])
+                ret = True
+            elif int(entrys_data[1]) > self.blockchain.acc_manager.last_id:
+                output_str += "We can not find the To Account {}!\n".format(entrys_data[1])
+                ret = True
+        if ret:
+            self.trans_text_write(entrys, output_str)
+            return
+        else:
+            if self.blockchain.create_block(int(entrys_data[0]), int(entrys_data[1]), int(entrys_data[2]),
+                                         entrys_data[3]):
+                output_str = "\nTransaction Mined Successfully!"
+                self.trans_text_write(entrys, output_str)
+                return
+            else:
+                output_str = "\nTransaction Failed to Mine.\nTry again"
+                self.trans_text_write(entrys, output_str)
+                return
 
     def write_trans_text(self, output):
+        """
+        Take 1 parameter, a String of output text.
+        Clears the text area and write the output text to it.
+        :param output:
+        :return:
+        """
         self.trans_text.delete(1.0, END)
         self.trans_text.insert(1.0, output)
 
@@ -352,7 +383,7 @@ class BlockGUI:
         self.trans_text = Text(transaction_frame, height=5, width=90)
         self.trans_text.grid(row=3, column=0, pady=2, padx=2, rowspan=3, columnspan=8, sticky=W)
 
-        submit_b = Button(transaction_frame, text="Submit")
+        submit_b = Button(transaction_frame, text="Submit", command=self.add_transaction)
         submit_b.grid(row=6, column=0, pady=2, padx=2, columnspan=8, sticky=W + E + N + S)
 
         root.mainloop()
