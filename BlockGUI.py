@@ -1,3 +1,9 @@
+# Application: Airgead Crypto
+# File: BlockGUI.py
+# Version: 0.1
+# Author: Phillip Hourigan
+# Course: DT249/4
+
 import tkinter as tk
 from tkinter.ttk import *
 import tkinter.font as tk_font
@@ -220,6 +226,13 @@ class BlockGUI:
         return str_dict
 
     def add_transaction(self):
+        """
+        This method is used add a new transaction on the blockchain.
+        All input is tested to see if its valid. From account is tested to see if they have enough funds.
+        If transaction is mined successfully and message is displayed. If there are any errors a message
+        will be displayed.
+        :return:
+        """
         output_str = ""
         ret = False
         fields = ["From Accout ", "To Accout ", "Amount ", "Transaction Details "]
@@ -276,22 +289,30 @@ class BlockGUI:
         self.trans_text.insert(1.0, output)
 
     def dashboard(self):
+        """
+        The elements for the GUI
+        :return:
+        """
 
         root = Tk()
         root.title("Airgead Crypto Dashboard")
         font_size = tk_font.Font(size=20)
 
+        # GUI image settings
         heading_img = PhotoImage(file=r"images/airgeadcrypto.png")
         heading = heading_img.subsample(2, 5)
 
+        # Frame for the image
         image_frame = Frame(root)
         image_frame.grid(row=0, column=0, columnspan=8, rowspan=2)
         label_image = Label(image_frame, image=heading)
         label_image.grid(row=0, column=0, columnspan=8, rowspan=2, sticky=W+E)
 
+        # Frame for holding all other frames in the GUI
         parent_frame = Frame(root)
         parent_frame.grid(row=3, column=0, padx=2, pady=2)
 
+        # Frame for holding the blockchain state information
         top_frame = Frame(parent_frame, highlightbackground="black", highlightcolor="black", highlightthickness=1)
         top_frame.grid(row=2, column=0, columnspan=8, rowspan=2, pady=2)
 
@@ -319,6 +340,7 @@ class BlockGUI:
         self.entry_top4.grid(row=1, column=6, columnspan=2, sticky=W+E, padx=3, pady=2)
         self.get_avg_time()
 
+        # Frame for holding the Inputs for quaring the Blockchain, changing the mining difficulty.
         large_frame = Frame(parent_frame, highlightbackground="black", highlightcolor="black", highlightthickness=1)
         large_frame.grid(row=4, column=0, padx=2, columnspan=8, pady=2)
 
@@ -355,13 +377,12 @@ class BlockGUI:
         self.output_text = Text(button_frame, height=12, width=90)
         self.output_text.grid(row=3, column=0,columnspan=8, padx=2,pady=2)
 
+        # Frame for holding the form for adding a new transaction(Block).
         transaction_frame = Frame(large_frame, highlightbackground="black", highlightcolor="black", highlightthickness=1)
         transaction_frame.grid(row=3, column=0, columnspan=8, padx=3, pady=3)
 
         title_l = Label(transaction_frame, text="Create a New Block Transaction:", anchor=CENTER)
         title_l.grid(row=0, column=0, pady=2, padx=2, columnspan=8)
-        # title_e = Entry(t_gui)
-        # title_e.grid(row=1, column=1, sticky=W, pady=2, padx=2)
 
         from_acc_l = Label(transaction_frame, text="From Account:")
         from_acc_l.grid(row=1, column=0, sticky=W, columnspan=1, pady=2, padx=2)
@@ -390,42 +411,3 @@ class BlockGUI:
 
 gui = BlockGUI()
 gui.dashboard()
-
-
-    # lable_num_blk = Label(root, text="Number of blocks - {}".format(0))
-    # lable_num_blk['font'] = font_size
-    #
-    #
-    # lable_last_blk_time = Label(root, text="Last Block Creation Time - {}".format(0))
-    # lable_last_blk_time['font'] = font_size
-
-    #
-    # lable_blk_time = Label(root, text="Average Block Creation Time - {}".format(0))
-    # lable_blk_time['font'] = font_size
-    #
-    # lable_num_blk.grid(row=0, column=0, sticky=W)
-    # lable_last_blk_time.grid(row=1, column=0, sticky=W)
-    # lable_blk_time.grid(row=2, column=0, sticky=W)
-    #
-    # helv36 = tk_font.Font(family='Helvetica', size=20, weight=tk_font.BOLD)
-    # transaction_b = Button(root, text="Add Transaction", font=helv36)
-    # # transaction_b['font'] = font_size
-    # transaction_b.grid(row=3, column=1)
-
-    # frame = tk.Frame(root, bg="white")
-    # frame.place(relwidth=0.9, relheight=0.9, relx=0.05, rely=0.05)
-    #
-    # lable_num_blk = tk.Label(frame, text="Number of blocks - {}".format(0))
-    # lable_num_blk['font'] = font_size
-    # lable_num_blk.grid(row=0, column=0, sticky=W)
-    # lable_num_blk.pack()
-    #
-    # lable_last_blk_time = tk.Label(frame, text="Last Block Creation Time - {}".format(0))
-    # lable_last_blk_time['font'] = font_size
-    # lable_last_blk_time.pack()
-    #
-    # lable_blk_time = tk.Label(frame, text="Average Block Creation Time - {}".format(0))
-    # lable_blk_time['font'] = font_size
-    # lable_blk_time.pack()
-
-

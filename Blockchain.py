@@ -59,7 +59,7 @@ class Blockchain:
         hash_data = Miner().mining(trans, self.difficulty)
         end_time = time.monotonic()
         if self.verify_hash(trans, hash_data):
-            new_blk = Block(self.block_number, hash_data[0], time.time(), hash_data[1], end_time - start_time,
+            new_blk = Block(self.block_number + 1, hash_data[0], time.time(), hash_data[1], end_time - start_time,
                             trans, self.BLK_FILE)
             self.increase_block_number()
             self.change_previous_hash(hash_data[0])
