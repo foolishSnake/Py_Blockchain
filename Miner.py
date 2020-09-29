@@ -1,5 +1,4 @@
 import hashlib
-from VerifyBlock import VerifyBlock
 
 
 class Miner:
@@ -46,18 +45,3 @@ class Miner:
                 self.nonce += 1
                 continue
         return block_hash
-
-
-test = Miner()
-
-
-hash_value = test.mining("test", 1)
-
-print(hash_value)
-print(test.nonce)
-
-ver = VerifyBlock()
-print(ver.verify_block("test", hash_value[0], hash_value[1]))
-
-# print(test.test_hash("000637d8fcd2c6da6359e6963113a1170de795e4b725b84d1e0b4cfd9ec58ce9"))
-

@@ -11,6 +11,16 @@ def main():
 
 
 def test_blockchain_files(blockchain):
+    """
+    Take a  Blockchain object as a parameter.
+    Tests if the Blockchain account and Block file exist and id they are empty.
+    If they don't exist creates a genesis block and a system account plus two user accounts.
+    Returns True if the files exist and there is data in them and True if it creates the genesis block and
+    default accounts.
+    Returns False if it fails to create the genesis block our account.
+    :param blockchain:
+    :return:
+    """
     if blockchain.test_bc_file(blockchain.ACC_FILE) and blockchain.test_bc_file(blockchain.BLK_FILE):
         return True
     else:

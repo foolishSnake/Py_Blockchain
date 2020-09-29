@@ -47,5 +47,3 @@ class Transaction:
                      "To Account": self.to_acc, "Amount": self.amount, "Note": self.note}
         trans_json = json.dumps(trans_dic)
         return trans_json
-
-

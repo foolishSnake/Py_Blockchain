@@ -17,10 +17,9 @@ from datetime import datetime
 
 class BlockGUI:
 
-    def __init__(self):
+    def __init__(self,blockchain):
 
-    #     self.blockchain = blockchain
-        self.blockchain = Blockchain()
+        self.blockchain = blockchain
         self.entry_top1 = None
         self.entry_top2 = None
         self.entry_top3 = None
@@ -219,7 +218,6 @@ class BlockGUI:
                     str_dict += "{:<15}{}\n".format(key, datetime.utcfromtimestamp(float(value)))
                 else:
                     str_dict += "{:<15}{}\n".format(key, value)
-        print(dict_trans)
         for key, value in dict_trans.items():
             str_dict += "{:<15}{}\n".format(key, value)
 
@@ -408,6 +406,3 @@ class BlockGUI:
         submit_b.grid(row=6, column=0, pady=2, padx=2, columnspan=8, sticky=W + E + N + S)
 
         root.mainloop()
-
-gui = BlockGUI()
-gui.dashboard()

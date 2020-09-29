@@ -267,7 +267,9 @@ class Blockchain:
                 csv_read = csv.DictReader(read, delimiter="|")
                 for line in csv_read:
                     block_number = int(line["Block Number"])
+                    pre_hash = json.loads(line['Block Data'])["Previous Hash"]
                 self.block_number = block_number
+                self.previous_hash = pre_hash
         else:
             self.block_number = block_number
 
@@ -287,21 +289,3 @@ class Blockchain:
                 self.average_creation_time = average_time / (self.block_number + 1)
         else:
             self.average_creation_time = average_time
-
-
-
-# bc = Blockchain()
-# # print(bc.transaction_json(1,2, 100, "Note ya"))
-# bc.genesis_block()
-# bc.first_accounts()
-# bc.create_block(2, 4, 50, "Sale of Car.")
-
-# # bc.first_accounts()
-# # bc.add_account("Hannah")
-# file = bc.acc_manager.get_account(2)
-# print(file.account_dict())
-# bc.acc_manager.amend_balance(4, 100)
-#
-# # file = bc.acc_manager.get_account(2)
-# # print(file.account_dict())
-
