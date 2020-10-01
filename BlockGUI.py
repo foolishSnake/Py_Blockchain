@@ -215,11 +215,11 @@ class BlockGUI:
         for key, value in dict.items():
             if key != 'Block Data':
                 if key == 'Time Stamp':
-                    str_dict += "{:<15}{}\n".format(key, datetime.utcfromtimestamp(float(value)))
+                    str_dict += "{:<19}{}\n".format(key, datetime.utcfromtimestamp(float(value)))
                 else:
-                    str_dict += "{:<15}{}\n".format(key, value)
+                    str_dict += "{:<19}{}\n".format(key, value)
         for key, value in dict_trans.items():
-            str_dict += "{:<15}{}\n".format(key, value)
+            str_dict += "{:<19}{}\n".format(key, value)
 
         return str_dict
 

@@ -7,8 +7,9 @@ def main():
     if test_blockchain_files(bc):
         BlockGUI(bc).dashboard()
     else:
-        print("Ohh No something went wrong!")
-
+        bc.genesis_block()
+        bc.first_accounts()
+        BlockGUI(bc).dashboard()
 
 def test_blockchain_files(blockchain):
     """

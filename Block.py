@@ -14,9 +14,10 @@ class Block:
     It has methods to write a block.
     """
     CSV_HEADER = ['Block Number', 'Block Hash', 'Nonce', 'Time Stamp',
-                  'Creation Time', 'Mining_difficulty', 'Block Data']
+                  'Creation Time', 'Mining Difficulty', 'Block Data']
 
-    def __init__(self, number, block_hash, time_stamp, nonce, creation_time, block_data, chain_file, mining_difficulty):
+    def __init__(self, number, block_hash, time_stamp, nonce, creation_time, block_data, mining_difficulty ,
+                 chain_file):
         self.number = number
         self.block_hash = block_hash
         self.nonce = nonce
@@ -52,7 +53,7 @@ class Block:
         """
         csv_dict = {self.CSV_HEADER[0]: self.number, self.CSV_HEADER[1]: self.block_hash,
                     self.CSV_HEADER[2]: str(self.nonce), self.CSV_HEADER[3]: str(self.time_stamp),
-                    self.CSV_HEADER[4]: str(self.creation_time), self.CSV_HEADER[6]: self.mining_difficulty,
-                    self.CSV_HEADER[5]: self.block_data}
+                    self.CSV_HEADER[4]: str(self.creation_time), self.CSV_HEADER[5]: self.mining_difficulty,
+                    self.CSV_HEADER[6]: self.block_data}
 
         return csv_dict
