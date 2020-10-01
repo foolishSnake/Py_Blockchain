@@ -18,7 +18,7 @@ from datetime import datetime
 class BlockGUI:
 
     def __init__(self,blockchain):
-
+        self.root = Tk()
         self.blockchain = blockchain
         self.entry_top1 = None
         self.entry_top2 = None
@@ -145,7 +145,7 @@ class BlockGUI:
 
     def difficulty_entry(self):
         """
-        Claers the text in the Entry for the minning difficulty and then updates it with the current difficulty.
+        Clears the text in the Entry for the minning difficulty and then updates it with the current difficulty.
         :return:
         """
         self.entry_top1.delete(0, END)
@@ -286,14 +286,20 @@ class BlockGUI:
         self.trans_text.delete(1.0, END)
         self.trans_text.insert(1.0, output)
 
+    def update_fields(self):
+        self.difficulty_entry()
+        self.get_number_blk()
+        self.get_avg_time()
+        self.get_blk_time()
+        self.root.after(1000, self.update_fields)
+
     def dashboard(self):
         """
         The elements for the GUI
         :return:
         """
 
-        root = Tk()
-        root.title("Airgead Crypto Dashboard")
+        self.root.title("Airgead Crypto Dashboard")
         font_size = tk_font.Font(size=20)
 
         # GUI image settings
@@ -301,13 +307,13 @@ class BlockGUI:
         heading = heading_img.subsample(2, 5)
 
         # Frame for the image
-        image_frame = Frame(root)
+        image_frame = Frame(self.root)
         image_frame.grid(row=0, column=0, columnspan=8, rowspan=2)
         label_image = Label(image_frame, image=heading)
         label_image.grid(row=0, column=0, columnspan=8, rowspan=2, sticky=W+E)
 
         # Frame for holding all other frames in the GUI
-        parent_frame = Frame(root)
+        parent_frame = Frame(self.root)
         parent_frame.grid(row=3, column=0, padx=2, pady=2)
 
         # Frame for holding the blockchain state information
@@ -405,4 +411,6 @@ class BlockGUI:
         submit_b = Button(transaction_frame, text="Submit", command=self.add_transaction)
         submit_b.grid(row=6, column=0, pady=2, padx=2, columnspan=8, sticky=W + E + N + S)
 
-        root.mainloop()
+        self.root.after(1000, self.update_fields)
+        self.root.mainloop()
+

@@ -13,12 +13,14 @@ class Block:
     The Block Class used as a data structure for information stored on the Blockchain.
     It has methods to write a block.
     """
-    CSV_HEADER = ['Block Number', 'Block Hash', 'Nonce', 'Time Stamp', 'Creation Time', 'Block Data']
+    CSV_HEADER = ['Block Number', 'Block Hash', 'Nonce', 'Time Stamp',
+                  'Creation Time', 'Mining_difficulty', 'Block Data']
 
-    def __init__(self, number, block_hash, time_stamp, nonce, creation_time, block_data, chain_file):
+    def __init__(self, number, block_hash, time_stamp, nonce, creation_time, block_data, chain_file, mining_difficulty):
         self.number = number
         self.block_hash = block_hash
         self.nonce = nonce
+        self.mining_difficulty = mining_difficulty
         self.time_stamp = time_stamp
         self.creation_time = creation_time
         self.block_data = block_data
@@ -50,5 +52,7 @@ class Block:
         """
         csv_dict = {self.CSV_HEADER[0]: self.number, self.CSV_HEADER[1]: self.block_hash,
                     self.CSV_HEADER[2]: str(self.nonce), self.CSV_HEADER[3]: str(self.time_stamp),
-                    self.CSV_HEADER[4]: str(self.creation_time), self.CSV_HEADER[5]: self.block_data}
+                    self.CSV_HEADER[4]: str(self.creation_time), self.CSV_HEADER[6]: self.mining_difficulty,
+                    self.CSV_HEADER[5]: self.block_data}
+
         return csv_dict

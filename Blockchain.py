@@ -60,7 +60,7 @@ class Blockchain:
         end_time = time.monotonic()
         if self.verify_hash(trans, hash_data):
             new_blk = Block(self.block_number + 1, hash_data[0], time.time(), hash_data[1], end_time - start_time,
-                            trans, self.BLK_FILE)
+                            trans, self.BLK_FILE, self.difficulty)
             self.increase_block_number()
             self.change_previous_hash(hash_data[0])
             self.blocks.append(new_blk)
@@ -267,7 +267,7 @@ class Blockchain:
                 csv_read = csv.DictReader(read, delimiter="|")
                 for line in csv_read:
                     block_number = int(line["Block Number"])
-                    pre_hash = json.loads(line['Block Data'])["Previous Hash"]
+                    pre_hash = line["Block Hash"]
                 self.block_number = block_number
                 self.previous_hash = pre_hash
         else:
