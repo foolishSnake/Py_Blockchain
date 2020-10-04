@@ -218,7 +218,7 @@ class Blockchain:
             with open(self.BLK_FILE, 'r') as read:
                 csv_read = csv.DictReader(read, delimiter="|")
                 for line in csv_read:
-                    if int(line[key]) == value:
+                    if line[key] == value:
                         return line
                 else:
                     return None

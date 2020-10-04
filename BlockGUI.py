@@ -13,6 +13,7 @@ from Account import Account
 import time
 import json
 from datetime import datetime
+from re import match
 
 
 class BlockGUI:
@@ -26,6 +27,7 @@ class BlockGUI:
         self.entry_top4 = None
         self.acc_entry = None
         self.blk_entry = None
+        self.verify_entry = None
         self.mining_entry = None
         self.output_text = None
         self.from_acc_e = None
@@ -60,10 +62,11 @@ class BlockGUI:
         """
         if len(string) == 0:
             return self.ERRORS[0]
-        elif not string.isdigit():
-            return self.ERRORS[5]
-        else:
+        elif  string.isdigit():
             return string
+        else:
+            return self.ERRORS[0]
+
     def clear_entry(self, ent):
         """
         Take an entry object as a parameter.
@@ -152,12 +155,18 @@ class BlockGUI:
         self.entry_top1.insert(0, self.blockchain.difficulty)
 
     def display_acc(self):
+        """
+        Read the value in the accout entry. Tests if the input is valid.
+        If the input is valid will attemt to read the account information.
+        If the account is read successfully, dispalys the account information in the text area.
+        If the input is invalid or the account is not found a message detailing the issue will be dispaled
+        In the text area.
+        :return:
+        """
         acc_id = self.acc_entry.get()
         self.acc_entry.delete(0, END)
-        output_str = ""
-        if len(acc_id) == 0:
-            output_str = self.ERRORS[0] + acc_id
-        elif acc_id.isdigit():
+        output_str = self.input_error_int(acc_id)
+        if output_str == acc_id:
             acc = self.blockchain.acc_manager.get_account(int(acc_id))
             if not acc:
                 output_str = self.ERRORS[1] + acc_id
@@ -185,21 +194,31 @@ class BlockGUI:
         """
         output_str = ""
         blk = self.blk_entry.get()
-        if len(blk) == 64 and (not blk.isdigit()):
-            dict = self.blockchain.get_block_by_hash(blk)
-            if not dict:
-                output_str = self.ERRORS[3]
-            else:
-                output_str = self.dict_output(dict)
-        elif self.input_error_int(blk) == blk:
-            dict = self.blockchain.get_block_by_id(int(blk))
-            if not dict:
-                output_str = self.ERRORS[3]
-            else:
-                output_str = self.dict_output(dict)
+        dict = self.get_blk_dict(blk)
+        if dict != None:
+            output_str = self.dict_output(dict)
+        else:
+            output_str = self.ERRORS[2]
 
         self.clear_entry(self.blk_entry)
         self.write_output_text(output_str)
+
+    def get_blk_dict(self, blk):
+        """
+        Reads a block form the blockchain and retuens a dictorany of it attributes.
+        Test if the input is a Hash value if it is read the block using the hash,
+        else it tests the input in a digit, if it is reads the block using the block ID.
+        If the block can't be read return None.
+        :param blk:
+        :return:
+        """
+        dict = None
+        if blk.isdigit():
+            dict = self.blockchain.get_block_by_id(blk)
+        else:
+            if re.match("^[a-f0-9]{64}$", blk) != None:
+                dict = self.blockchain.get_block_by_hash(blk)
+        return dict
 
 
     def dict_output(self, dict):
@@ -287,11 +306,22 @@ class BlockGUI:
         self.trans_text.insert(1.0, output)
 
     def update_fields(self):
+        """
+        Every second this method reads and updates the values for the 4 feilds at the tip of the GUI.
+        :return:
+        """
         self.difficulty_entry()
         self.get_number_blk()
         self.get_avg_time()
         self.get_blk_time()
         self.root.after(1000, self.update_fields)
+
+    def verify_block(self):
+        output_str = ""
+        blk = self.blk_entry.get()
+        if len(blk) == 64 and (not blk.isdigit()):
+            dict = self.blockchain.get_block_by_hash(blk)
+        pass
 
     def dashboard(self):
         """
@@ -378,8 +408,15 @@ class BlockGUI:
         blk_button = Button(button_frame, text="Submit", command=self.display_blk)
         blk_button.grid(row=2, column=7, columnspan=1, padx=2, pady=2, sticky=W)
 
+        verify_l = Label(button_frame, text="Verify Block:", anchor=W)
+        verify_l.grid(row=3, column=0, pady=2, padx=2, columnspan=1)
+        self.verify_entry = Entry(button_frame)
+        self.verify_entry.grid(row=3, column=1, columnspan=5, padx=2, pady=2, sticky=W + E)
+        verify_button = Button(button_frame, text="Submit", command=self.verify_block)
+        verify_button.grid(row=3, column=7, columnspan=1, padx=2, pady=2, sticky=W)
+
         self.output_text = Text(button_frame, height=12, width=90)
-        self.output_text.grid(row=3, column=0,columnspan=8, padx=2,pady=2)
+        self.output_text.grid(row=4, column=0,columnspan=8, padx=2,pady=2)
 
         # Frame for holding the form for adding a new transaction(Block).
         transaction_frame = Frame(large_frame, highlightbackground="black", highlightcolor="black", highlightthickness=1)
