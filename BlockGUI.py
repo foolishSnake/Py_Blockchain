@@ -212,14 +212,12 @@ class BlockGUI:
         :param blk:
         :return:
         """
-        dict = None
         if blk.isdigit():
-            dict = self.blockchain.get_block_by_id(blk)
+            return self.blockchain.get_block_by_id(blk)
+        elif re.match("^[a-f0-9]{64}$", blk) != None:
+                return self.blockchain.get_block_by_hash(blk)
         else:
-            if re.match("^[a-f0-9]{64}$", blk) != None:
-                dict = self.blockchain.get_block_by_hash(blk)
-        return dict
-
+            return None
 
     def dict_output(self, dict):
         """
@@ -317,11 +315,36 @@ class BlockGUI:
         self.root.after(1000, self.update_fields)
 
     def verify_block(self):
+        """
+        Reads the value in the verify_entry. This value should be a String for a Block Number or
+         Block Hash, Attempts to read the blockchain to get the block infromation.
+        Tests that the Hash is valid, test if the blocks orevious hash matches the hash of the previous
+        block.
+        Writes to the text area the results of its tests.
+        :return:
+        """
         output_str = ""
-        blk = self.blk_entry.get()
-        if len(blk) == 64 and (not blk.isdigit()):
-            dict = self.blockchain.get_block_by_hash(blk)
-        pass
+        blk = self.verify_entry.get()
+        self.verify_entry.delete(0, END)
+        dict = self.get_blk_dict(blk)
+        if not dict:
+            output_str = self.ERRORS[2]
+        else:
+            blk_id = dict['Block Number']
+            blk_hash = dict['Block Hash']
+            nonce = dict['Nonce']
+            previous = json.loads(dict['Block Data'])['Previous Hash']
+            output_str += "Block Number:{:<15}\nBlock Hash:{:<15}\n".format(blk_id, blk_hash)
+            if self.blockchain.verify_hash(dict['Block Data'], [blk_hash, nonce]):
+                output_str += "The Block Hash is Valid\n"
+            elif blk_id > 1:
+                if previous == self.get_blk_dict(str(int(blk_id - 1)))['Block Hash']:
+                    output_str += "The Blocks Previous Hash Matches the Hash of Block Number: {}\n"\
+                        .format(int(blk_id - 1))
+                else:
+                    output_str += "The Blocks Previous Hash Matches Does not Match Hash of Block Number: {}\n" \
+                        .format(int(blk_id - 1))
+        self.write_output_text(output_str)
 
     def dashboard(self):
         """
