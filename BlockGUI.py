@@ -301,7 +301,8 @@ class BlockGUI:
         :return:
         """
         self.trans_text.delete(1.0, END)
-        self.trans_text.insert(1.0, output)
+        self.output_text.delete(1.0, END)
+        self.output_text.insert(1.0, output)
 
     def update_fields(self):
         """
@@ -473,4 +474,3 @@ class BlockGUI:
 
         self.root.after(1000, self.update_fields)
         self.root.mainloop()
-

@@ -15,18 +15,21 @@ import csv
 
 
 class Blockchain:
-    NAME = "Airgead Crypto"
-    block_number = 0
-    difficulty = 1
-    average_creation_time = 0.0
-    last_blk_creation_time = 0.0
-    ACC_FILE = "AirgeadCryptoAccount.csv"
-    BLK_FILE = "AirgeadCryptoBlockchain.csv"
-    previous_hash = "0000000000000000000000000000000000000000000000000000000000000000"
-    blocks = []
-    accounts = []
+    """
+    The Blockchain class interacts with the other class need to run the blockchain.
+    """
 
     def __init__(self):
+        self.NAME = "Airgead Crypto"
+        self.block_number = 0
+        self.difficulty = 1
+        self.average_creation_time = 0.0
+        self.last_blk_creation_time = 0.0
+        self.ACC_FILE = "AirgeadCryptoAccount.csv"
+        self.BLK_FILE = "AirgeadCryptoBlockchain.csv"
+        self.previous_hash = "0000000000000000000000000000000000000000000000000000000000000000"
+        self.blocks = []
+        self.accounts = []
         self.acc_manager = AccountManager(self.ACC_FILE)
         self.set_block_number()
         self.set_average_time()

@@ -3,6 +3,12 @@ from BlockGUI import BlockGUI
 
 
 def main():
+    """
+    Main instantiates a Blockchain object. When created tests if there is an account and blockchain .csv
+    file. If there is starts the GUI dashboard. If the files are not created, set up default accounts and
+    a genesis block.
+    :return:
+    """
     bc = Blockchain()
     if test_blockchain_files(bc):
         BlockGUI(bc).dashboard()

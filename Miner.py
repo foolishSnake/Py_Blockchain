@@ -2,11 +2,15 @@ import hashlib
 
 
 class Miner:
+    """
+    Miner class is used to mine new transactions on the blockchain.
+    """
 
     def __init__(self):
         self.nonce = 0
 
-    def get_hash(self, transaction, nonce):
+    @staticmethod
+    def get_hash(transaction, nonce):
         """
         Uses a String of transaction data and the nonce value to generate a SHA256 hash
         :param transaction:
@@ -17,12 +21,13 @@ class Miner:
         sha_signature = hashlib.sha256(hashing_value.encode()).hexdigest()
         return sha_signature
 
-    def test_hash(self, block_hash, difficulty):
+    @staticmethod
+    def test_hash(block_hash, difficulty):
         """
         Uses a block_hash and tests if it meets the difficulty level.
         Difficulty is the number of leading 0 in the hash.
         :param block_hash:
-        :return: Boolan
+        :return: Boolean
         """
         for i in range(difficulty):
             if block_hash[i] != "0":
